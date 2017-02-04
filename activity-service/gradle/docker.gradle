@@ -1,0 +1,18 @@
+task buildDocker(type: Exec) {
+    dependsOn 'build'
+
+    doFirst {
+        copy {
+            from "docker"
+            into "build/docker"
+            include "*"
+        }
+        copy {
+            from "build/libs"
+            into "build/docker"
+            include "*jar"
+        }
+    }
+
+    commandLine 'docker', 'build', '-f', 'build/docker/Dockerfile', '-t', 'activity-service', 'build/docker/'
+}
