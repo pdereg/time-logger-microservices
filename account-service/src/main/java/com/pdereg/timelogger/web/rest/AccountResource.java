@@ -76,7 +76,13 @@ public class AccountResource {
     @GetMapping("/accounts/{username:" + User.USERNAME_PATTERN + "}")
     public CompletableFuture<User> getAccount(@PathVariable String username) {
         return userService.findOneByUsername(username)
-                .thenApply(user -> user.orElseThrow(AccountNotFoundException::new));
+                .thenApply(user -> {
+                    if (!user.isPresent()) {
+                        throw new AccountNotFoundException();
+                    }
+
+                    return user.get();
+                });
     }
 
     /**
