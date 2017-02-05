@@ -9,7 +9,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Provides an abstraction layer over {@link UserRepository}. Used for performing CRUD operations on {@link User}
@@ -34,14 +36,32 @@ public class UserService {
      * @param password User's plain password. Note that it will be hashed first before saving.
      * @return New {@link User} instance
      */
-    public User createUser(String username, String password) {
+    public CompletableFuture<User> createUser(String username, String password) {
         User newUser = new User();
         newUser.setUsername(username);
         addInitialAuthorities(newUser);
         encodeAndSetPassword(newUser, password);
 
-        userRepository.save(newUser);
-        return newUser;
+        return CompletableFuture.supplyAsync(() -> userRepository.save(newUser));
+    }
+
+    /**
+     * Fetches and returns all {@link User} instances from database.
+     *
+     * @return A list of all {@link User} instances
+     */
+    public CompletableFuture<List<User>> findAll() {
+        return CompletableFuture.supplyAsync(() -> userRepository.findAll());
+    }
+
+    /**
+     * Fetches and returns a {@link User} instance with a given {@code username}.
+     *
+     * @param username Name of the user to fetch
+     * @return Optional {@link User} instance with a given {@code username}
+     */
+    public CompletableFuture<Optional<User>> findOneByUsername(String username) {
+        return CompletableFuture.supplyAsync(() -> userRepository.findOneByUsername(username));
     }
 
     /**
@@ -50,12 +70,15 @@ public class UserService {
      * @param username Name of the user for whom to change the password
      * @param password New plain password. Note that it will be hashed first before saving.
      */
-    public void changePassword(String username, String password) {
-        Optional<User> userOptional = userRepository.findOneByUsername(username);
-        userOptional.ifPresent(user -> {
-            encodeAndSetPassword(user, password);
-            userRepository.save(user);
-        });
+    public CompletableFuture<Void> changePassword(String username, String password) {
+        CompletableFuture<Optional<User>> future = findOneByUsername(username);
+
+        return future.thenAccept(userOptional ->
+                userOptional.ifPresent(user -> {
+                    encodeAndSetPassword(user, password);
+                    userRepository.save(user);
+                })
+        );
     }
 
     /**
@@ -63,9 +86,12 @@ public class UserService {
      *
      * @param username Name of the user to delete
      */
-    public void deleteUser(String username) {
-        Optional<User> userOptional = userRepository.findOneByUsername(username);
-        userOptional.ifPresent(userRepository::delete);
+    public CompletableFuture<Void> deleteUser(String username) {
+        CompletableFuture<Optional<User>> future = findOneByUsername(username);
+
+        return future.thenAccept(userOptional ->
+                userOptional.ifPresent(userRepository::delete)
+        );
     }
 
     private void addInitialAuthorities(User user) {

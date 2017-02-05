@@ -106,6 +106,7 @@ public class User implements UserDetails {
     /**
      * Method unused.
      */
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -114,6 +115,7 @@ public class User implements UserDetails {
     /**
      * Method unused.
      */
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
@@ -122,6 +124,7 @@ public class User implements UserDetails {
     /**
      * Method unused.
      */
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
@@ -130,6 +133,7 @@ public class User implements UserDetails {
     /**
      * Method unused.
      */
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;
@@ -148,5 +152,12 @@ public class User implements UserDetails {
     @Override
     public int hashCode() {
         return username.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                '}';
     }
 }

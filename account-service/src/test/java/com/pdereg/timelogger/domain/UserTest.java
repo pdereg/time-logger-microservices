@@ -104,6 +104,15 @@ public class UserTest {
         assertFalse(violations.isEmpty());
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void getAuthorities_returnsImmutableCollection() {
+        GrantedAuthority authority = generateAuthority();
+        user.addAuthority(authority);
+
+        Collection<?> grantedAuthorities = user.getAuthorities();
+        grantedAuthorities.clear();
+    }
+
     @Test
     public void removeAuthority_removesValueCorrectly() {
         GrantedAuthority authority = generateAuthority();
@@ -162,6 +171,15 @@ public class UserTest {
     @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     public void equals_returnsFalseForNullValue() {
         assertFalse(user.equals(false));
+    }
+
+    @Test
+    public void toString_returnsTextThatDoesNotContainUserPassword() {
+        String password = generateRandomPassword();
+        user.setPassword(password);
+
+        String userAsString = user.toString();
+        assertFalse(userAsString.contains(password));
     }
 
     private Set<ConstraintViolation<User>> getConstraintViolations() {

@@ -31,11 +31,11 @@ public class UserServiceIntTest {
     private UserService userService;
 
     @Test
-    public void createUser_savesNewUserInRepository() {
+    public void createUser_savesNewUserInRepository() throws Exception {
         String username = generateRandomUsername();
         String password = generateRandomPassword();
 
-        User newUser = userService.createUser(username, password);
+        User newUser = userService.createUser(username, password).get();
         Optional<User> fetchedUser = userRepository.findOneByUsername(username);
 
         assertTrue(fetchedUser.isPresent());
@@ -43,11 +43,11 @@ public class UserServiceIntTest {
     }
 
     @Test
-    public void createUser_encodesUserPassword() {
+    public void createUser_encodesUserPassword() throws Exception {
         String username = generateRandomUsername();
         String password = generateRandomPassword();
 
-        User newUser = userService.createUser(username, password);
+        User newUser = userService.createUser(username, password).get();
         String savedPassword = newUser.getPassword();
 
         assertNotEquals(password, savedPassword);
@@ -55,24 +55,24 @@ public class UserServiceIntTest {
     }
 
     @Test
-    public void createUser_addsInitialAuthorities() {
+    public void createUser_addsInitialAuthorities() throws Exception {
         String username = generateRandomUsername();
         String password = generateRandomPassword();
 
-        User newUser = userService.createUser(username, password);
+        User newUser = userService.createUser(username, password).get();
         Collection<?> authorities = newUser.getAuthorities();
 
         assertFalse(authorities.isEmpty());
     }
 
     @Test
-    public void changePassword_savesNewPasswordInRepository() {
+    public void changePassword_savesNewPasswordInRepository() throws Exception {
         String username = generateRandomUsername();
         String password = generateRandomPassword();
-        User newUser = userService.createUser(username, password);
+        User newUser = userService.createUser(username, password).get();
 
         String newPassword = generateRandomPassword();
-        userService.changePassword(username, newPassword);
+        userService.changePassword(username, newPassword).get();
 
         Optional<User> fetchedUser = userRepository.findOneByUsername(username);
         assertTrue(fetchedUser.isPresent());
@@ -83,13 +83,13 @@ public class UserServiceIntTest {
     }
 
     @Test
-    public void changePassword_encodesNewUserPassword() {
+    public void changePassword_encodesNewUserPassword() throws Exception {
         String username = generateRandomUsername();
         String password = generateRandomPassword();
-        userService.createUser(username, password);
+        userService.createUser(username, password).get();
 
         String newPassword = generateRandomPassword();
-        userService.changePassword(username, newPassword);
+        userService.changePassword(username, newPassword).get();
 
         Optional<User> fetchedUser = userRepository.findOneByUsername(username);
         assertTrue(fetchedUser.isPresent());
@@ -99,12 +99,12 @@ public class UserServiceIntTest {
     }
 
     @Test
-    public void deleteUser_removesUserFromRepository() {
+    public void deleteUser_removesUserFromRepository() throws Exception {
         String username = generateRandomUsername();
         String password = generateRandomPassword();
-        userService.changePassword(username, password);
+        userService.changePassword(username, password).get();
 
-        userService.deleteUser(username);
+        userService.deleteUser(username).get();
         Optional<User> fetchedUser = userRepository.findOneByUsername(username);
 
         assertFalse(fetchedUser.isPresent());
