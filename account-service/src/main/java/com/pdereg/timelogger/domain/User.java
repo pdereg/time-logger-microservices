@@ -2,6 +2,7 @@ package com.pdereg.timelogger.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,6 +32,7 @@ public class User implements UserDetails {
     @NotNull
     @Size(min = MIN_USERNAME_SIZE, max = MAX_USERNAME_SIZE)
     @Pattern(regexp = USERNAME_PATTERN)
+    @Indexed(unique = true)
     private String username;
 
     @JsonIgnore

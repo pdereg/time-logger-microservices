@@ -3,14 +3,18 @@ package com.pdereg.timelogger.service;
 import com.pdereg.timelogger.Application;
 import com.pdereg.timelogger.domain.User;
 import com.pdereg.timelogger.repository.UserRepository;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static com.pdereg.timelogger.TestUtils.generateRandomPassword;
@@ -22,6 +26,9 @@ import static org.junit.Assert.*;
 public class UserServiceIntTest {
 
     @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -29,6 +36,16 @@ public class UserServiceIntTest {
 
     @Autowired
     private UserService userService;
+
+    @Before
+    public void setUp() {
+        mongoTemplate.dropCollection(User.class);
+    }
+
+    @After
+    public void tearDown() {
+        mongoTemplate.dropCollection(User.class);
+    }
 
     @Test
     public void createUser_savesNewUserInRepository() throws Exception {
@@ -63,6 +80,30 @@ public class UserServiceIntTest {
         Collection<?> authorities = newUser.getAuthorities();
 
         assertFalse(authorities.isEmpty());
+    }
+
+    @Test
+    public void findAll_returnsAllUsersFromRepository() throws Exception {
+        String username = generateRandomUsername();
+        String password = generateRandomPassword();
+        userService.createUser(username, password).get();
+
+        List<User> users = userService.findAll().get();
+        List<User> fetchedUsers = userRepository.findAll();
+
+        assertEquals(fetchedUsers, users);
+    }
+
+    @Test
+    public void findOneByUsername_returnsCorrectUserIfExists() throws Exception {
+        String username = generateRandomUsername();
+        String password = generateRandomPassword();
+
+        User user = userService.createUser(username, password).get();
+        Optional<User> fetchedUser = userService.findOneByUsername(username).get();
+
+        assertTrue(fetchedUser.isPresent());
+        assertEquals(user, fetchedUser.get());
     }
 
     @Test
