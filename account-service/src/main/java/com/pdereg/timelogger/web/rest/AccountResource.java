@@ -1,7 +1,7 @@
 package com.pdereg.timelogger.web.rest;
 
 import com.pdereg.timelogger.domain.User;
-import com.pdereg.timelogger.security.Authorities;
+import com.pdereg.timelogger.security.annotations.AdminRequired;
 import com.pdereg.timelogger.service.UserService;
 import com.pdereg.timelogger.web.rest.errors.AccountNotFoundException;
 import com.pdereg.timelogger.web.rest.errors.UsernameInUseException;
@@ -11,7 +11,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -42,7 +41,7 @@ public class AccountResource {
      * @return Newly created {@link User} instance
      */
     @PostMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @Secured(Authorities.ADMIN)
+    @AdminRequired
     @Async
     public CompletableFuture<HttpEntity<User>> createAccount(@RequestBody @Valid CreateAccountRequest request) {
         String username = request.getUsername();
@@ -65,7 +64,7 @@ public class AccountResource {
      * @return A list of all {@link User} instances
      */
     @GetMapping("/accounts")
-    @Secured(Authorities.ADMIN)
+    @AdminRequired
     @Async
     public CompletableFuture<List<User>> getAllAccounts() {
         return userService.findAll();
@@ -96,7 +95,7 @@ public class AccountResource {
      * @param username Name of the user to delete
      */
     @DeleteMapping("/accounts/{username:" + User.USERNAME_PATTERN + "}")
-    @Secured(Authorities.ADMIN)
+    @AdminRequired
     @Async
     public CompletableFuture<Void> deleteAccount(@PathVariable String username) {
         CompletableFuture<Optional<User>> future = userService.findOneByUsername(username);

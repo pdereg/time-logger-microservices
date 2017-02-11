@@ -1,6 +1,7 @@
 package com.pdereg.timelogger.web.rest;
 
 import com.pdereg.timelogger.TestUtils;
+import com.pdereg.timelogger.security.Authorities;
 import com.pdereg.timelogger.service.UserService;
 import com.pdereg.timelogger.web.rest.model.CreateAccountRequest;
 import org.junit.Before;
@@ -8,25 +9,32 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.concurrent.ExecutionException;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@WebAppConfiguration
+@SpringBootTest
 public class AccountResourceIntTest {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private UserService userService;
@@ -39,14 +47,14 @@ public class AccountResourceIntTest {
     }
 
     private void initializeRestAccountMockMvc() {
-        AccountResource accountResource = new AccountResource(userService);
-
         this.restAccountMockMvc = MockMvcBuilders
-                .standaloneSetup(accountResource)
+                .webAppContextSetup(webApplicationContext)
+                .apply(springSecurity())
                 .build();
     }
 
     @Test
+    @WithMockUser(authorities = {Authorities.USER, Authorities.ADMIN})
     public void createAccount_returnsOkIfAllCorrect() throws Exception {
         String username = TestUtils.generateRandomUsername();
         byte[] requestBody = createAccountRequest(username);
@@ -65,6 +73,7 @@ public class AccountResourceIntTest {
     }
 
     @Test
+    @WithMockUser(authorities = {Authorities.USER, Authorities.ADMIN})
     public void createAccount_returnsClientErrorForEmptyBody() throws Exception {
         restAccountMockMvc.perform(
                 post("/api/accounts")
@@ -74,6 +83,7 @@ public class AccountResourceIntTest {
     }
 
     @Test
+    @WithMockUser(authorities = {Authorities.USER, Authorities.ADMIN})
     public void createAccount_returnsClientErrorIfAccountExists() throws Exception {
         String username = TestUtils.generateRandomUsername();
         createAccount(username);
@@ -91,6 +101,23 @@ public class AccountResourceIntTest {
     }
 
     @Test
+    @WithMockUser(authorities = Authorities.USER)
+    public void createAccount_returnsClientErrorIfUserIsNotAdmin() throws Exception {
+        String username = TestUtils.generateRandomUsername();
+        createAccount(username);
+
+        byte[] requestBody = createAccountRequest(username);
+        restAccountMockMvc.perform(
+                post("/api/accounts")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(content().string(equalTo("")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {Authorities.USER, Authorities.ADMIN})
     public void getAllAccounts_returnsOkIfAllCorrect() throws Exception {
         String username1 = TestUtils.generateRandomUsername();
         createAccount(username1);
@@ -109,6 +136,14 @@ public class AccountResourceIntTest {
     }
 
     @Test
+    @WithMockUser(authorities = Authorities.USER)
+    public void getAllAccounts_returnsClientErrorIfUserIsNotAdmin() throws Exception {
+        restAccountMockMvc.perform(get("/api/accounts"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = Authorities.USER)
     public void getAccount_returnsOkIfAllCorrect() throws Exception {
         String username = TestUtils.generateRandomUsername();
         createAccount(username);
@@ -123,6 +158,7 @@ public class AccountResourceIntTest {
     }
 
     @Test
+    @WithMockUser(authorities = Authorities.USER)
     public void getAccount_returnsClientErrorForNonExistingUser() throws Exception {
         String username = TestUtils.generateRandomUsername();
 
@@ -135,6 +171,16 @@ public class AccountResourceIntTest {
     }
 
     @Test
+    public void getAccount_returnsClientErrorIfUserIsNotAuthorized() throws Exception {
+        String username = TestUtils.generateRandomUsername();
+
+        restAccountMockMvc.perform(
+                get("/api/accounts/{username}", username))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {Authorities.USER, Authorities.ADMIN})
     public void deleteAccount_returnsOkIfAllCorrect() throws Exception {
         String username = TestUtils.generateRandomUsername();
         createAccount(username);
@@ -149,6 +195,7 @@ public class AccountResourceIntTest {
     }
 
     @Test
+    @WithMockUser(authorities = {Authorities.USER, Authorities.ADMIN})
     public void deleteAccount_returnsClientErrorForNonExistingUser() throws Exception {
         String username = TestUtils.generateRandomUsername();
 
@@ -158,6 +205,16 @@ public class AccountResourceIntTest {
 
         restAccountMockMvc.perform(asyncDispatch(result))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(authorities = Authorities.USER)
+    public void deleteAccount_returnsClientErrorIfUserIsNotAdmin() throws Exception {
+        String username = TestUtils.generateRandomUsername();
+
+        restAccountMockMvc.perform(
+                delete("/api/accounts/{username}", username))
+                .andExpect(status().isForbidden());
     }
 
     private byte[] createAccountRequest(String username) {
