@@ -8,7 +8,9 @@ import com.pdereg.timelogger.web.rest.errors.UsernameInUseException;
 import com.pdereg.timelogger.web.rest.model.CreateAccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,8 +41,9 @@ public class AccountResource {
      * @param request HTTP request body which contains data for user creation
      * @return Newly created {@link User} instance
      */
-    @PostMapping("/accounts")
+    @PostMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Secured(Authorities.ADMIN)
+    @Async
     public CompletableFuture<HttpEntity<User>> createAccount(@RequestBody @Valid CreateAccountRequest request) {
         String username = request.getUsername();
         String password = request.getPassword();
@@ -63,6 +66,7 @@ public class AccountResource {
      */
     @GetMapping("/accounts")
     @Secured(Authorities.ADMIN)
+    @Async
     public CompletableFuture<List<User>> getAllAccounts() {
         return userService.findAll();
     }
@@ -74,6 +78,7 @@ public class AccountResource {
      * @return {@link User} instance for a given {@code username}
      */
     @GetMapping("/accounts/{username:" + User.USERNAME_PATTERN + "}")
+    @Async
     public CompletableFuture<User> getAccount(@PathVariable String username) {
         return userService.findOneByUsername(username)
                 .thenApply(user -> {
@@ -92,6 +97,7 @@ public class AccountResource {
      */
     @DeleteMapping("/accounts/{username:" + User.USERNAME_PATTERN + "}")
     @Secured(Authorities.ADMIN)
+    @Async
     public CompletableFuture<Void> deleteAccount(@PathVariable String username) {
         CompletableFuture<Optional<User>> future = userService.findOneByUsername(username);
         return future.thenCompose(userOptional -> {

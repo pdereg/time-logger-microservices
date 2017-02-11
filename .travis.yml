@@ -1,7 +1,5 @@
 os:
   - linux
-services:
-  - mongodb
 language: java
 jdk:
   - oraclejdk8
