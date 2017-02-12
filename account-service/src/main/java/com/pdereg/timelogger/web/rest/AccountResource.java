@@ -1,6 +1,7 @@
 package com.pdereg.timelogger.web.rest;
 
 import com.pdereg.timelogger.domain.User;
+import com.pdereg.timelogger.security.annotations.AdminOrAccountOwnerRequired;
 import com.pdereg.timelogger.security.annotations.AdminRequired;
 import com.pdereg.timelogger.service.UserService;
 import com.pdereg.timelogger.web.rest.errors.AccountNotFoundException;
@@ -8,7 +9,6 @@ import com.pdereg.timelogger.web.rest.errors.UsernameInUseException;
 import com.pdereg.timelogger.web.rest.model.CreateAccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +40,7 @@ public class AccountResource {
      * @param request HTTP request body which contains data for user creation
      * @return Newly created {@link User} instance
      */
-    @PostMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping("/accounts")
     @AdminRequired
     @Async
     public CompletableFuture<HttpEntity<User>> createAccount(@RequestBody @Valid CreateAccountRequest request) {
@@ -77,6 +77,7 @@ public class AccountResource {
      * @return {@link User} instance for a given {@code username}
      */
     @GetMapping("/accounts/{username:" + User.USERNAME_PATTERN + "}")
+    @AdminOrAccountOwnerRequired
     @Async
     public CompletableFuture<User> getAccount(@PathVariable String username) {
         return userService.findOneByUsername(username)
@@ -95,7 +96,7 @@ public class AccountResource {
      * @param username Name of the user to delete
      */
     @DeleteMapping("/accounts/{username:" + User.USERNAME_PATTERN + "}")
-    @AdminRequired
+    @AdminOrAccountOwnerRequired
     @Async
     public CompletableFuture<Void> deleteAccount(@PathVariable String username) {
         CompletableFuture<Optional<User>> future = userService.findOneByUsername(username);

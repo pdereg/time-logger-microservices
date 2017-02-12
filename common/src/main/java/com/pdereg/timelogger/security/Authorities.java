@@ -1,5 +1,8 @@
 package com.pdereg.timelogger.security;
 
+/**
+ * User authority constants.
+ */
 public class Authorities {
 
     public static final String USER = "ROLE_USER";

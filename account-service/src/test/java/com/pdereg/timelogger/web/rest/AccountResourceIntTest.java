@@ -143,9 +143,9 @@ public class AccountResourceIntTest {
     }
 
     @Test
-    @WithMockUser(authorities = Authorities.USER)
+    @WithMockUser(username = "user", authorities = Authorities.USER)
     public void getAccount_returnsOkIfAllCorrect() throws Exception {
-        String username = TestUtils.generateRandomUsername();
+        String username = "user";
         createAccount(username);
 
         MvcResult result = restAccountMockMvc.perform(
@@ -159,6 +159,17 @@ public class AccountResourceIntTest {
 
     @Test
     @WithMockUser(authorities = Authorities.USER)
+    public void getAccount_returnsClientErrorIfUserIsNotOwner() throws Exception {
+        String username = TestUtils.generateRandomUsername();
+        createAccount(username);
+
+        restAccountMockMvc.perform(
+                get("/api/accounts/{username}", username))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {Authorities.USER, Authorities.ADMIN})
     public void getAccount_returnsClientErrorForNonExistingUser() throws Exception {
         String username = TestUtils.generateRandomUsername();
 
@@ -180,9 +191,9 @@ public class AccountResourceIntTest {
     }
 
     @Test
-    @WithMockUser(authorities = {Authorities.USER, Authorities.ADMIN})
+    @WithMockUser(username = "user", authorities = Authorities.USER)
     public void deleteAccount_returnsOkIfAllCorrect() throws Exception {
-        String username = TestUtils.generateRandomUsername();
+        String username = "user";
         createAccount(username);
 
         MvcResult result = restAccountMockMvc.perform(
@@ -209,7 +220,7 @@ public class AccountResourceIntTest {
 
     @Test
     @WithMockUser(authorities = Authorities.USER)
-    public void deleteAccount_returnsClientErrorIfUserIsNotAdmin() throws Exception {
+    public void deleteAccount_returnsClientErrorIfUserIsNotOwner() throws Exception {
         String username = TestUtils.generateRandomUsername();
 
         restAccountMockMvc.perform(

@@ -9,10 +9,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Meta annotation for methods that require the user to have ADMIN authority.
+ * Meta annotation for methods that require the user to have ADMIN authority or have their username equal to 'username'
+ * method parameter (implying a resource owner).
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAuthority('" + Authorities.ADMIN + "')")
-public @interface AdminRequired {
+@PreAuthorize("hasAuthority('" + Authorities.ADMIN + "') || authentication.name == #username")
+public @interface AdminOrAccountOwnerRequired {
 }
