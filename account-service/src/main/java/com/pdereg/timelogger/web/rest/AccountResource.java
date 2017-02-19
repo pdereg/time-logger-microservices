@@ -17,7 +17,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -44,18 +43,18 @@ public class AccountResource {
     @AdminRequired
     @Async
     public CompletableFuture<HttpEntity<User>> createAccount(@RequestBody @Valid CreateAccountRequest request) {
-        String username = request.getUsername();
-        String password = request.getPassword();
+        final String username = request.getUsername();
+        final String password = request.getPassword();
 
-        CompletableFuture<Optional<User>> future = userService.findOneByUsername(username);
-        return future.thenCompose(userOptional -> {
-            if (userOptional.isPresent()) {
-                throw new UsernameInUseException();
-            }
-
-            return userService.createUser(username, password)
-                    .thenApply(this::createAccountResponse);
-        });
+        return userService
+                .findOneByUsername(username)
+                .thenAccept(userOptional -> {
+                    if (userOptional.isPresent()) {
+                        throw new UsernameInUseException();
+                    }
+                })
+                .thenCompose(unit -> userService.createUser(username, password))
+                .thenApply(this::createAccountResponse);
     }
 
     /**
@@ -80,14 +79,9 @@ public class AccountResource {
     @AdminOrAccountOwnerRequired
     @Async
     public CompletableFuture<User> getAccount(@PathVariable String username) {
-        return userService.findOneByUsername(username)
-                .thenApply(user -> {
-                    if (!user.isPresent()) {
-                        throw new AccountNotFoundException();
-                    }
-
-                    return user.get();
-                });
+        return userService
+                .findOneByUsername(username)
+                .thenApply(user -> user.orElseThrow(AccountNotFoundException::new));
     }
 
     /**
@@ -99,14 +93,11 @@ public class AccountResource {
     @AdminOrAccountOwnerRequired
     @Async
     public CompletableFuture<Void> deleteAccount(@PathVariable String username) {
-        CompletableFuture<Optional<User>> future = userService.findOneByUsername(username);
-        return future.thenCompose(userOptional -> {
-            if (!userOptional.isPresent()) {
-                throw new AccountNotFoundException();
-            }
-
-            return userService.deleteUser(username);
-        });
+        return userService
+                .findOneByUsername(username)
+                .thenApply(user -> user.orElseThrow(AccountNotFoundException::new))
+                .thenApply(User::getUsername)
+                .thenCompose(userService::deleteUser);
     }
 
     private ResponseEntity<User> createAccountResponse(User user) {
