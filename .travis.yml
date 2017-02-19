@@ -7,4 +7,5 @@ env:
   - TEST_DIR=common
   - TEST_DIR=account-service
 script:
+  - cd $TEST_DIR && gradle clean test
   - cd $TEST_DIR && gradle clean test build
