@@ -1,6 +1,7 @@
 package com.pdereg.timelogger.web.rest;
 
 import com.pdereg.timelogger.TestUtils;
+import com.pdereg.timelogger.configuration.CommonConfiguration;
 import com.pdereg.timelogger.security.Authorities;
 import com.pdereg.timelogger.service.UserService;
 import com.pdereg.timelogger.web.rest.model.CreateAccountRequest;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @SpringBootTest
+@TestPropertySource(properties = {CommonConfiguration.SECRET_ENV_KEY + "=test1234"})
 public class AccountResourceIntTest {
 
     @Autowired

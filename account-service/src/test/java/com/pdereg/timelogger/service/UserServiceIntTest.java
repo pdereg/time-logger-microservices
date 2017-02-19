@@ -1,6 +1,7 @@
 package com.pdereg.timelogger.service;
 
 import com.pdereg.timelogger.Application;
+import com.pdereg.timelogger.configuration.CommonConfiguration;
 import com.pdereg.timelogger.domain.User;
 import com.pdereg.timelogger.repository.UserRepository;
 import org.junit.After;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
@@ -23,6 +25,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
+@TestPropertySource(properties = {CommonConfiguration.SECRET_ENV_KEY + "=test1234"})
 public class UserServiceIntTest {
 
     @Autowired

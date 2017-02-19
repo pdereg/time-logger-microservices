@@ -3,6 +3,7 @@ package com.pdereg.timelogger.config;
 import com.pdereg.timelogger.security.Authorities;
 import com.pdereg.timelogger.security.jwt.JwtFilter;
 import com.pdereg.timelogger.security.jwt.JwtHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,16 +14,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.time.Duration;
-
 /**
  * Provides beans for security configuration.
  */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    private JwtHandler jwtHandler;
+
+    @Autowired
+    public SecurityConfiguration(JwtHandler jwtHandler) {
+        this.jwtHandler = jwtHandler;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -48,13 +52,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private JwtFilter getJwtFilter() {
-        return new JwtFilter(jwtHandler());
-    }
-
-    // TODO: Implement an actual method
-    private JwtHandler jwtHandler() {
-        String secret = "test123";
-        SecretKey secretKey = new SecretKeySpec(secret.getBytes(), "AES");
-        return new JwtHandler(secretKey, Duration.ofHours(1), "", "");
+        return new JwtFilter(jwtHandler);
     }
 }
