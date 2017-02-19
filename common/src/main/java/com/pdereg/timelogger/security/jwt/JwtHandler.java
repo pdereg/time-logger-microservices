@@ -1,9 +1,9 @@
 package com.pdereg.timelogger.security.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,14 +23,28 @@ import java.util.stream.Collectors;
  */
 public class JwtHandler {
 
-    private static final String AUTHORITIES_KEY = "auth";
+    static final String AUTHORITIES_KEY = "auth";
 
     private final SecretKey secretKey;
     private final Duration tokenValidity;
+    private final String issuer;
+    private final String audience;
 
-    public JwtHandler(SecretKey secretKey, Duration tokenValidity) {
+    public JwtHandler(SecretKey secretKey, Duration tokenValidity, String issuer, String audience) {
         this.secretKey = secretKey;
         this.tokenValidity = tokenValidity;
+        this.issuer = issuer;
+        this.audience = audience;
+    }
+
+    /**
+     * Creates a new JWT for provided {@code authentication} using current system time.
+     *
+     * @see JwtHandler#createToken(Authentication, Date)
+     */
+    public String createToken(Authentication authentication) {
+        Date now = new Date();
+        return createToken(authentication, now);
     }
 
     /**
@@ -39,19 +53,22 @@ public class JwtHandler {
      * @param authentication {@link Authentication} instance for which to create a new JWT
      * @return Newly created JSON Web Token
      */
-    public String createToken(Authentication authentication) {
+    public String createToken(Authentication authentication, Date issuedAt) {
         String username = authentication.getName();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         String parsedAuthorities = parseAuthorities(authorities);
 
-        Date validity = newTokenValidity();
+        Date validity = newTokenValidity(issuedAt);
 
         return Jwts.builder()
+                .setIssuer(issuer)
+                .setIssuedAt(issuedAt)
+                .setExpiration(validity)
                 .setSubject(username)
+                .setAudience(audience)
                 .claim(AUTHORITIES_KEY, parsedAuthorities)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
-                .setExpiration(validity)
                 .compact();
     }
 
@@ -80,11 +97,11 @@ public class JwtHandler {
                 .collect(Collectors.joining(","));
     }
 
-    private Date newTokenValidity() {
+    private Date newTokenValidity(Date from) {
         long tokenDurationAsMillis = tokenValidity.toMillis();
-        long now = new Date().getTime();
+        long fromMillis = from.getTime();
 
-        return new Date(now + tokenDurationAsMillis);
+        return new Date(fromMillis + tokenDurationAsMillis);
     }
 
     private Optional<Claims> parseToken(String rawToken) {
@@ -95,7 +112,7 @@ public class JwtHandler {
                     .getBody();
 
             return Optional.of(claims);
-        } catch (SignatureException e) {
+        } catch (JwtException e) {
             return Optional.empty();
         }
     }

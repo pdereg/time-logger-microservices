@@ -55,6 +55,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private JwtHandler jwtHandler() {
         String secret = "test123";
         SecretKey secretKey = new SecretKeySpec(secret.getBytes(), "AES");
-        return new JwtHandler(secretKey, Duration.ofHours(1));
+        return new JwtHandler(secretKey, Duration.ofHours(1), "", "");
     }
 }

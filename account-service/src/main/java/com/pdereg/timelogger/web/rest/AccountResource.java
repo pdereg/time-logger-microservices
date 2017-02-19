@@ -101,7 +101,7 @@ public class AccountResource {
     }
 
     private ResponseEntity<User> createAccountResponse(User user) {
-        URI accountUri = createAccountUri(user);
+        final URI accountUri = createAccountUri(user);
 
         return ResponseEntity
                 .created(accountUri)
