@@ -81,7 +81,7 @@ public class AccountResource {
     public CompletableFuture<User> getAccount(@PathVariable String username) {
         return userService
                 .findOneByUsername(username)
-                .thenApply(user -> user.orElseThrow(AccountNotFoundException::new));
+                .thenApply(user -> user.<AccountNotFoundException>orElseThrow(AccountNotFoundException::new));
     }
 
     /**
@@ -95,7 +95,7 @@ public class AccountResource {
     public CompletableFuture<Void> deleteAccount(@PathVariable String username) {
         return userService
                 .findOneByUsername(username)
-                .thenApply(user -> user.orElseThrow(AccountNotFoundException::new))
+                .thenApply(user -> user.<AccountNotFoundException>orElseThrow(AccountNotFoundException::new))
                 .thenApply(User::getUsername)
                 .thenCompose(userService::deleteUser);
     }
