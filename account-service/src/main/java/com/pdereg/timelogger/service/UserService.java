@@ -4,7 +4,6 @@ import com.pdereg.timelogger.domain.User;
 import com.pdereg.timelogger.repository.UserRepository;
 import com.pdereg.timelogger.security.Authorities;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,7 +36,6 @@ public class UserService {
      * @param password User's plain password. Note that it will be hashed first before saving.
      * @return New {@link User} instance
      */
-    @Async
     public CompletableFuture<User> createUser(String username, String password) {
         User newUser = new User();
         newUser.setUsername(username);
@@ -52,7 +50,6 @@ public class UserService {
      *
      * @return A list of all {@link User} instances
      */
-    @Async
     public CompletableFuture<List<User>> findAll() {
         return CompletableFuture.supplyAsync(() -> userRepository.findAll());
     }
@@ -63,7 +60,6 @@ public class UserService {
      * @param username Name of the user to fetch
      * @return Optional {@link User} instance for a given {@code username}
      */
-    @Async
     public CompletableFuture<Optional<User>> findOneByUsername(String username) {
         return CompletableFuture.supplyAsync(() -> userRepository.findOneByUsername(username));
     }
@@ -74,7 +70,6 @@ public class UserService {
      * @param username Name of the user for whom to change the password
      * @param password New plain password. Note that it will be hashed first before saving.
      */
-    @Async
     public CompletableFuture<Void> changePassword(String username, String password) {
         CompletableFuture<Optional<User>> future = findOneByUsername(username);
 
@@ -91,7 +86,6 @@ public class UserService {
      *
      * @param username Name of the user to delete
      */
-    @Async
     public CompletableFuture<Void> deleteUser(String username) {
         CompletableFuture<Optional<User>> future = findOneByUsername(username);
 

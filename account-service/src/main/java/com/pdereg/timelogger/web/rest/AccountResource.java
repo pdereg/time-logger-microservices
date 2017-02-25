@@ -10,7 +10,6 @@ import com.pdereg.timelogger.web.rest.model.CreateAccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -41,7 +40,6 @@ public class AccountResource {
      */
     @PostMapping("/accounts")
     @AdminRequired
-    @Async
     public CompletableFuture<HttpEntity<User>> createAccount(@RequestBody @Valid CreateAccountRequest request) {
         final String username = request.getUsername();
         final String password = request.getPassword();
@@ -53,7 +51,7 @@ public class AccountResource {
                         throw new UsernameInUseException();
                     }
                 })
-                .thenCompose(unit -> userService.createUser(username, password))
+                .thenComposeAsync(unit -> userService.createUser(username, password))
                 .thenApply(this::createAccountResponse);
     }
 
@@ -64,7 +62,6 @@ public class AccountResource {
      */
     @GetMapping("/accounts")
     @AdminRequired
-    @Async
     public CompletableFuture<List<User>> getAllAccounts() {
         return userService.findAll();
     }
@@ -77,7 +74,6 @@ public class AccountResource {
      */
     @GetMapping("/accounts/{username:" + User.USERNAME_PATTERN + "}")
     @AdminOrAccountOwnerRequired
-    @Async
     public CompletableFuture<User> getAccount(@PathVariable String username) {
         return userService
                 .findOneByUsername(username)
@@ -91,13 +87,12 @@ public class AccountResource {
      */
     @DeleteMapping("/accounts/{username:" + User.USERNAME_PATTERN + "}")
     @AdminOrAccountOwnerRequired
-    @Async
     public CompletableFuture<Void> deleteAccount(@PathVariable String username) {
         return userService
                 .findOneByUsername(username)
                 .thenApply(user -> user.<AccountNotFoundException>orElseThrow(AccountNotFoundException::new))
                 .thenApply(User::getUsername)
-                .thenCompose(userService::deleteUser);
+                .thenComposeAsync(userService::deleteUser);
     }
 
     private ResponseEntity<User> createAccountResponse(User user) {
