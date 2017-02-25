@@ -18,7 +18,7 @@ apply plugin: 'org.springframework.boot'
 apply from: 'gradle/docker.gradle'
 
 jar {
-    baseName = 'account-service'
+    baseName = 'api-gateway'
     version = "${version}"
 }
 
@@ -30,7 +30,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-eureka', version: "${spring_cloud_version}"
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${spring_boot_version}"
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-zuul', version: "${spring_cloud_version}"
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${spring_boot_version}"
 }

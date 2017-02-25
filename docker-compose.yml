@@ -1,6 +1,12 @@
 version: '2'
 
 services:
+  api-gateway:
+    image: api-gateway
+    ports:
+      - "80:80"
+    environment:
+      - EUREKA_HOST=discovery-server
   discovery-server:
     image: discovery-server
     ports:
