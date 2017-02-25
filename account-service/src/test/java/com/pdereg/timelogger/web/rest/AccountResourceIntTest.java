@@ -1,7 +1,7 @@
 package com.pdereg.timelogger.web.rest;
 
 import com.pdereg.timelogger.TestUtils;
-import com.pdereg.timelogger.configuration.CommonConfiguration;
+import com.pdereg.timelogger.config.CommonConfiguration;
 import com.pdereg.timelogger.security.Authorities;
 import com.pdereg.timelogger.service.UserService;
 import com.pdereg.timelogger.web.rest.model.CreateAccountRequest;

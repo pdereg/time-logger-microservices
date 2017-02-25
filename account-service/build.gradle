@@ -35,6 +35,7 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: "${spring_boot_version}"
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: "${spring_boot_version}"
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${spring_boot_version}"
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-eureka', version: "${spring_cloud_version}"
 
     testCompile group: 'org.apache.commons', name: 'commons-lang3', version: "${commons_lang3_version}"
     testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo', version: "${embed_mongo_version}"

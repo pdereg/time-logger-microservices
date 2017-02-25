@@ -1,4 +1,4 @@
-package com.pdereg.timelogger.configuration;
+package com.pdereg.timelogger.config;
 
 import com.pdereg.timelogger.security.jwt.JwtHandler;
 import org.springframework.beans.factory.annotation.Autowired;

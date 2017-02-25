@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  discovery-server:
+    image: discovery-server
+    ports:
+      - "8761:8761"
+  account-service:
+    image: account-service
+    environment:
+      - MONGODB_HOST=account-database
+      - EUREKA_HOST=discovery-server
+      - TIME_LOGGER_SECRET=${TIME_LOGGER_SECRET}
+    depends_on:
+      - discovery-server
+      - account-database
+  account-database:
+    image: mongo

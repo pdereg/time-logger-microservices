@@ -1,7 +1,7 @@
 package com.pdereg.timelogger.service;
 
 import com.pdereg.timelogger.Application;
-import com.pdereg.timelogger.configuration.CommonConfiguration;
+import com.pdereg.timelogger.config.CommonConfiguration;
 import com.pdereg.timelogger.domain.User;
 import com.pdereg.timelogger.repository.UserRepository;
 import org.junit.After;
