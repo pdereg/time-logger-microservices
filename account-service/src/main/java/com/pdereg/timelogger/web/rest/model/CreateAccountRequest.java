@@ -1,4 +1,4 @@
-package com.pdereg.timelogger.web.rest.model;
+package com.pdereg.timelogger.web.rest.errors;
 
 import com.pdereg.timelogger.domain.User;
 

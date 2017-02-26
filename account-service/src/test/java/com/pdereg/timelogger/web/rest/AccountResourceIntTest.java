@@ -4,7 +4,7 @@ import com.pdereg.timelogger.TestUtils;
 import com.pdereg.timelogger.config.CommonConfiguration;
 import com.pdereg.timelogger.security.Authorities;
 import com.pdereg.timelogger.service.UserService;
-import com.pdereg.timelogger.web.rest.model.CreateAccountRequest;
+import com.pdereg.timelogger.web.rest.errors.CreateAccountRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -194,6 +194,51 @@ public class AccountResourceIntTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {Authorities.USER, Authorities.GATEWAY})
+    public void authenticate_returnsOkIfAllCorrect() throws Exception {
+        String username = TestUtils.generateRandomUsername();
+        String password = TestUtils.generateRandomPassword();
+        createAccount(username, password);
+
+        MvcResult result = restAccountMockMvc.perform(
+                get("/api/accounts/{username}/authenticate?password={password}", username, password))
+                .andReturn();
+
+        restAccountMockMvc.perform(asyncDispatch(result))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").value(containsInAnyOrder(Authorities.USER)));
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {Authorities.USER, Authorities.GATEWAY})
+    public void authenticate_returnsClientErrorIfPasswordIsIncorrect() throws Exception {
+        String username = TestUtils.generateRandomUsername();
+        createAccount(username);
+
+        String incorrectPassword = TestUtils.generateRandomPassword();
+
+        MvcResult result = restAccountMockMvc.perform(
+                get("/api/accounts/{username}/authenticate?password={password}", username, incorrectPassword))
+                .andReturn();
+
+        restAccountMockMvc.perform(asyncDispatch(result))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {Authorities.USER, Authorities.ADMIN})
+    public void authenticate_returnsClientErrorIfUserIsNotGateway() throws Exception {
+        String username = TestUtils.generateRandomUsername();
+        String password = TestUtils.generateRandomPassword();
+        createAccount(username, password);
+
+        restAccountMockMvc.perform(
+                get("/api/accounts/{username}/authenticate?password={password}", username, password))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     @WithMockUser(username = "user", authorities = Authorities.USER)
     public void deleteAccount_returnsOkIfAllCorrect() throws Exception {
         String username = "user";
@@ -243,7 +288,10 @@ public class AccountResourceIntTest {
 
     private void createAccount(String username) {
         String password = TestUtils.generateRandomPassword();
+        createAccount(username, password);
+    }
 
+    private void createAccount(String username, String password) {
         try {
             userService.createUser(username, password).get();
         } catch (InterruptedException | ExecutionException e) {

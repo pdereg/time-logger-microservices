@@ -82,6 +82,18 @@ public class UserService {
     }
 
     /**
+     * Checks provided {@code password} for the given {@code user}.
+     *
+     * @param user     {@link User} instance for whom to check provided {@code password}
+     * @param password Raw password to check
+     * @return {@code true} if password is correct; {@code false} otherwise
+     */
+    public boolean checkPassword(User user, String password) {
+        String encodedPassword = user.getPassword();
+        return passwordEncoder.matches(password, encodedPassword);
+    }
+
+    /**
      * Deletes user of provided {@code username} from the database.
      *
      * @param username Name of the user to delete

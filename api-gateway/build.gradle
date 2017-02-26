@@ -30,8 +30,12 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-eureka', version: "${spring_cloud_version}"
+    compile project('../:common')
+
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: "${spring_boot_version}"
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${spring_boot_version}"
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-eureka', version: "${spring_cloud_version}"
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-feign', version: "${spring_cloud_version}"
     compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-zuul', version: "${spring_cloud_version}"
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${spring_boot_version}"

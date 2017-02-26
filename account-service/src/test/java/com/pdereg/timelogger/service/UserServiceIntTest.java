@@ -143,6 +143,25 @@ public class UserServiceIntTest {
     }
 
     @Test
+    public void checkPassword_returnsTrueIfProvidedPasswordIsCorrect() throws Exception {
+        String username = generateRandomUsername();
+        String password = generateRandomPassword();
+        User newUser = userService.createUser(username, password).get();
+
+        assertTrue(userService.checkPassword(newUser, password));
+    }
+
+    @Test
+    public void checkPassword_returnsFalseIfProvidedPasswordIsIncorrect() throws Exception {
+        String username = generateRandomUsername();
+        String password = generateRandomPassword();
+        User newUser = userService.createUser(username, password).get();
+
+        String incorrectPassword = generateRandomPassword();
+        assertFalse(userService.checkPassword(newUser, incorrectPassword));
+    }
+
+    @Test
     public void deleteUser_removesUserFromRepository() throws Exception {
         String username = generateRandomUsername();
         String password = generateRandomPassword();

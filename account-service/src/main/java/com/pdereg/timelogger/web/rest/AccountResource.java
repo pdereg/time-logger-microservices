@@ -3,20 +3,25 @@ package com.pdereg.timelogger.web.rest;
 import com.pdereg.timelogger.domain.User;
 import com.pdereg.timelogger.security.annotations.AdminOrAccountOwnerRequired;
 import com.pdereg.timelogger.security.annotations.AdminRequired;
+import com.pdereg.timelogger.security.annotations.GatewayRequired;
 import com.pdereg.timelogger.service.UserService;
 import com.pdereg.timelogger.web.rest.errors.AccountNotFoundException;
+import com.pdereg.timelogger.web.rest.errors.InvalidCredentialsException;
 import com.pdereg.timelogger.web.rest.errors.UsernameInUseException;
-import com.pdereg.timelogger.web.rest.model.CreateAccountRequest;
+import com.pdereg.timelogger.web.rest.errors.CreateAccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for user accounts.
@@ -25,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/api")
 public class AccountResource {
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public AccountResource(UserService userService) {
@@ -78,6 +83,30 @@ public class AccountResource {
         return userService
                 .findOneByUsername(username)
                 .thenApply(user -> user.<AccountNotFoundException>orElseThrow(AccountNotFoundException::new));
+    }
+
+    /**
+     * Authenticates user of provided {@code username}. For internal use only.
+     *
+     * @param username Name of the user to authenticate
+     * @param password User's raw password
+     * @return A set of user's authorities upon successful authentication or error
+     */
+    @GetMapping("/accounts/{username:" + User.USERNAME_PATTERN + "}/authenticate")
+    @GatewayRequired
+    public CompletableFuture<Set<String>> authenticate(@PathVariable String username, @RequestParam String password) {
+        return userService
+                .findOneByUsername(username)
+                .thenApply(user -> user.<InvalidCredentialsException>orElseThrow(InvalidCredentialsException::new))
+                .thenApply(user -> {
+                    if (userService.checkPassword(user, password)) {
+                        return user.getAuthorities().stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .collect(Collectors.toSet());
+                    }
+
+                    throw new InvalidCredentialsException();
+                });
     }
 
     /**
