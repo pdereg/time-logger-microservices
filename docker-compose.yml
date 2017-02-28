@@ -8,6 +8,8 @@ services:
     environment:
       - EUREKA_HOST=discovery-server
       - TIME_LOGGER_SECRET=${TIME_LOGGER_SECRET}
+    depends_on:
+      - discovery-server
   discovery-server:
     image: discovery-server
     ports:
