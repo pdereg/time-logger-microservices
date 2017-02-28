@@ -39,5 +39,6 @@ dependencies {
     compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-zuul', version: "${spring_cloud_version}"
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${spring_boot_version}"
+    testCompile group: 'org.springframework.security', name: 'spring-security-test', version: "${spring_security_version}"
     testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: "${wiremock_version}"
 }

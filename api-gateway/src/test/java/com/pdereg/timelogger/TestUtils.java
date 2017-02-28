@@ -2,6 +2,8 @@ package com.pdereg.timelogger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.util.Base64Utils;
 
 public class TestUtils {
 
@@ -9,8 +11,17 @@ public class TestUtils {
 
     }
 
+    public static String generateRandomString(int size) {
+        return RandomStringUtils.randomAlphanumeric(size);
+    }
+
+    public static String createBasicToken(String username, String password) {
+        final String rawToken = username + ":" + password;
+        return Base64Utils.encodeToString(rawToken.getBytes());
+    }
+
     public static <T> byte[] toJson(T object) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectMapper objectMapper = new ObjectMapper();
 
         try {
             return objectMapper.writeValueAsBytes(object);

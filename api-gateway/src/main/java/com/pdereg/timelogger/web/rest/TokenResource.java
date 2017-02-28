@@ -1,6 +1,5 @@
 package com.pdereg.timelogger.web.rest;
 
-import com.netflix.hystrix.exception.HystrixBadRequestException;
 import com.pdereg.timelogger.security.jwt.JwtHandler;
 import com.pdereg.timelogger.service.AccountService;
 import com.pdereg.timelogger.utils.BasicTokenParser;
@@ -46,15 +45,11 @@ public class TokenResource {
 
         final Pair<String, String> authorization = authorizationOptional.get();
 
-        try {
-            return accountService
-                    .authenticate(authorization.getLeft(), authorization.getRight())
-                    .exceptionally(throwable -> {
-                        throw new InvalidCredentialsException();
-                    })
-                    .thenApply(jwtHandler::createToken);
-        } catch (HystrixBadRequestException e) {
-            throw new InvalidCredentialsException();
-        }
+        return accountService
+                .authenticate(authorization.getLeft(), authorization.getRight())
+                .exceptionally(throwable -> {
+                    throw new InvalidCredentialsException();
+                })
+                .thenApply(jwtHandler::createToken);
     }
 }
