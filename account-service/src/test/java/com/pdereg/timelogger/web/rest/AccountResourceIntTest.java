@@ -190,7 +190,7 @@ public class AccountResourceIntTest {
 
         restAccountMockMvc.perform(
                 get("/api/accounts/{username}", username))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

@@ -19,6 +19,7 @@ import java.util.Optional;
 public class JwtFilter extends GenericFilterBean {
 
     private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
+    private static final String AUTHORIZATION_HEADER_KEY_ALT = "WWW-Authenticate";
     private static final String AUTHORIZATION_BEARER_VALUE = "Bearer ";
 
     private final JwtHandler jwtHandler;
@@ -54,7 +55,11 @@ public class JwtFilter extends GenericFilterBean {
         String rawToken = request.getHeader(AUTHORIZATION_HEADER_KEY);
 
         if (!isTokenFormatValid(rawToken)) {
-            return Optional.empty();
+            rawToken = request.getHeader(AUTHORIZATION_HEADER_KEY_ALT);
+
+            if (!isTokenFormatValid(rawToken)) {
+                return Optional.empty();
+            }
         }
 
         return Optional.of(extractTokenBearer(rawToken));

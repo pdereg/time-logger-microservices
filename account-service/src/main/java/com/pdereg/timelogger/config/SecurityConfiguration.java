@@ -4,6 +4,7 @@ import com.pdereg.timelogger.security.Authorities;
 import com.pdereg.timelogger.security.jwt.JwtFilter;
 import com.pdereg.timelogger.security.jwt.JwtHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -46,12 +47,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
+                .antMatchers("/").authenticated()
                 .antMatchers("/api/**").hasAuthority(Authorities.USER)
                 .and()
-                .addFilterBefore(getJwtFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(getJwtFilter(), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(getEntryPoint());
     }
 
     private JwtFilter getJwtFilter() {
         return new JwtFilter(jwtHandler);
+    }
+
+    private Http401AuthenticationEntryPoint getEntryPoint() {
+        return new Http401AuthenticationEntryPoint("Bearer");
     }
 }
