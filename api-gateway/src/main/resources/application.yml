@@ -13,3 +13,8 @@ zuul:
       serviceId: account-service
       stripPrefix: false
       sensitiveHeaders: Cookie,Set-Cookie
+
+logging:
+  level:
+    root: warn
+    com.pdereg.timelogger: info
