@@ -24,11 +24,6 @@ public class CreateAccountRequest {
 
     }
 
-    public CreateAccountRequest(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
     public String getUsername() {
         return username;
     }
