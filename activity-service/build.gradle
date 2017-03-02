@@ -18,7 +18,7 @@ apply plugin: 'org.springframework.boot'
 apply from: 'gradle/docker.gradle'
 
 jar {
-    baseName = 'account-service'
+    baseName = 'activity-service'
     version = "${version}"
 }
 
@@ -30,7 +30,11 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+    compile project('../:common')
+
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: "${spring_boot_version}"
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${spring_boot_version}"
 
+    testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo', version: "${embed_mongo_version}"
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${spring_boot_version}"
 }
