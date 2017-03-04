@@ -4,7 +4,7 @@ import com.pdereg.timelogger.TestUtils;
 import com.pdereg.timelogger.config.CommonConfiguration;
 import com.pdereg.timelogger.security.Authorities;
 import com.pdereg.timelogger.service.UserService;
-import com.pdereg.timelogger.web.rest.error.CreateAccountRequest;
+import com.pdereg.timelogger.web.rest.model.CreateAccountRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
