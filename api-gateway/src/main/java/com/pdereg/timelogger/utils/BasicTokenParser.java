@@ -40,8 +40,8 @@ public class BasicTokenParser {
 
     private static Optional<String> decodeToken(String token) {
         try {
-            byte[] decodedAsBytes = Base64Utils.decodeFromString(token);
-            String decodedAsString = new String(decodedAsBytes);
+            final byte[] decodedAsBytes = Base64Utils.decodeFromString(token);
+            final String decodedAsString = new String(decodedAsBytes);
             return Optional.of(decodedAsString);
         } catch (RuntimeException e) {
             return Optional.empty();

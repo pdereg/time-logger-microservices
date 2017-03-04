@@ -137,6 +137,36 @@ public class AccountServiceIntTest {
     }
 
     @Test
+    public void updateActivity_updatesExistingActivityCorrectly() throws Exception {
+        String accountId = generateRandomString(10);
+        String name = generateRandomActivityName();
+        long requiredDuration = generateActivityDuration();
+        boolean[] weekdays = generateActivityWeekdays();
+        activityService.createActivity(accountId, name, requiredDuration, weekdays).get();
+
+        long newRequiredDuration = requiredDuration * 2;
+
+        boolean[] newWeekdays = new boolean[weekdays.length];
+        for (int i = 0; i < weekdays.length; ++i) {
+            newWeekdays[i] = !weekdays[i];
+        }
+
+        Activity activity = activityService.updateActivity(accountId, name, newRequiredDuration, newWeekdays).get();
+
+        assertEquals(newRequiredDuration, activity.getRequiredDuration());
+        assertArrayEquals(newWeekdays, activity.getWeekdays());
+    }
+
+    @Test(expected = Exception.class)
+    public void updateActivity_throwsExceptionIfActivityDoesNotExist() throws Exception {
+        String accountId = generateRandomString(10);
+        String name = generateRandomActivityName();
+        long requiredDuration = generateActivityDuration();
+        boolean[] weekdays = generateActivityWeekdays();
+        activityService.updateActivity(accountId, name, requiredDuration, weekdays).get();
+    }
+
+    @Test
     public void deleteActivity_removesActivityFromRepository() throws Exception {
         String accountId = generateRandomString(10);
         String name = generateRandomActivityName();

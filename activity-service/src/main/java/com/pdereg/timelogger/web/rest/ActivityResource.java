@@ -2,10 +2,10 @@ package com.pdereg.timelogger.web.rest;
 
 import com.pdereg.timelogger.domain.Activity;
 import com.pdereg.timelogger.security.annotations.AdminOrAccountOwnerRequired;
-import com.pdereg.timelogger.security.annotations.UserRequired;
 import com.pdereg.timelogger.service.ActivityService;
 import com.pdereg.timelogger.service.error.ActivityNotFoundException;
 import com.pdereg.timelogger.web.rest.model.CreateActivityRequest;
+import com.pdereg.timelogger.web.rest.model.UpdateActivityRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +40,6 @@ public class ActivityResource {
      * @return Newly created {@link Activity} instance
      */
     @PostMapping("/activities")
-    @UserRequired
     public CompletableFuture<HttpEntity<Activity>> createActivity(@RequestBody @Valid CreateActivityRequest request,
                                                                   Principal principal) {
 
@@ -61,7 +60,6 @@ public class ActivityResource {
      * @return A list of all {@link Activity} instances for the current user
      */
     @GetMapping("/activities")
-    @UserRequired
     public CompletableFuture<List<Activity>> getAllActivities(Principal principal) {
         final String accountId = principal.getName();
         return activityService.findAllByAccountId(accountId);
@@ -92,6 +90,25 @@ public class ActivityResource {
         return activityService
                 .findOneByAccountIdAndName(username, name)
                 .thenApply(activity -> activity.<ActivityNotFoundException>orElseThrow(ActivityNotFoundException::new));
+    }
+
+    /**
+     * Updates an existing {@link Activity}.
+     *
+     * @param username Name of the account associated with the activity to update
+     * @param name     Name of the activity to update
+     * @param request  HTTP request body which contains data for update
+     * @return Updated {@link Activity} instance
+     */
+    @PutMapping("/activities/{username}/{name}")
+    @AdminOrAccountOwnerRequired
+    public CompletableFuture<Activity> updateActivity(@PathVariable String username, @PathVariable String name,
+                                                      @RequestBody @Valid UpdateActivityRequest request) {
+
+        final long requiredDuration = request.getRequiredDuration();
+        final boolean[] weekdays = request.getWeekdays();
+
+        return activityService.updateActivity(username, name, requiredDuration, weekdays);
     }
 
     /**

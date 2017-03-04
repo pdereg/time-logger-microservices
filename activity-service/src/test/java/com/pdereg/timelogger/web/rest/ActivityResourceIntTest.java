@@ -5,6 +5,7 @@ import com.pdereg.timelogger.domain.Activity;
 import com.pdereg.timelogger.security.Authorities;
 import com.pdereg.timelogger.service.ActivityService;
 import com.pdereg.timelogger.web.rest.model.CreateActivityRequest;
+import com.pdereg.timelogger.web.rest.model.UpdateActivityRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,8 +84,8 @@ public class ActivityResourceIntTest {
         restActivityMockMvc.perform(asyncDispatch(result))
                 .andExpect(status().isCreated())
                 .andExpect(header().string(HttpHeaders.LOCATION, containsString(name)))
-                .andExpect(jsonPath("$.accountId").value(accountId))
-                .andExpect(jsonPath("$.name").value(name))
+                .andExpect(jsonPath("$.accountId").value(equalTo(accountId)))
+                .andExpect(jsonPath("$.name").value(equalTo(name)))
                 .andExpect(jsonPath("$.requiredDuration").value(requiredDuration))
                 .andExpect(jsonPath("$.weekdays").isArray());
     }
@@ -192,8 +193,8 @@ public class ActivityResourceIntTest {
 
         restActivityMockMvc.perform(asyncDispatch(result))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accountId").value(accountId))
-                .andExpect(jsonPath("$.name").value(name))
+                .andExpect(jsonPath("$.accountId").value(equalTo(accountId)))
+                .andExpect(jsonPath("$.name").value(equalTo(name)))
                 .andExpect(jsonPath("$.requiredDuration").value(requiredDuration))
                 .andExpect(jsonPath("$.weekdays").isArray());
     }
@@ -228,6 +229,37 @@ public class ActivityResourceIntTest {
 
         restActivityMockMvc.perform(asyncDispatch(result))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = Authorities.USER)
+    public void update_returnsOkIfAllCorrect() throws Exception {
+        String accountId = "user";
+        String name = generateRandomActivityName();
+        long requiredDuration = generateActivityDuration();
+        boolean[] weekdays = generateActivityWeekdays();
+        createActivity(accountId, name, requiredDuration, weekdays);
+
+        long newRequiredDuration = requiredDuration * 2;
+
+        boolean[] newWeekdays = new boolean[weekdays.length];
+        for (int i = 0; i < weekdays.length; ++i) {
+            newWeekdays[i] = !weekdays[i];
+        }
+
+        byte[] requestBody = updateActivityRequest(newRequiredDuration, newWeekdays);
+        MvcResult result = restActivityMockMvc.perform(
+                put("/api/activities/{username}/{name}", accountId, name)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andReturn();
+
+        restActivityMockMvc.perform(asyncDispatch(result))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accountId").value(equalTo(accountId)))
+                .andExpect(jsonPath("$.name").value(equalTo(name)))
+                .andExpect(jsonPath("$.requiredDuration").value(newRequiredDuration));
     }
 
     @Test
@@ -288,5 +320,12 @@ public class ActivityResourceIntTest {
             throws Exception {
 
         activityService.createActivity(accountId, name, requiredDuration, weekdays).get();
+    }
+
+    private byte[] updateActivityRequest(long requiredDuration, boolean[] weekdays) {
+        UpdateActivityRequest updateActivityRequest = new UpdateActivityRequest();
+        updateActivityRequest.setRequiredDuration(requiredDuration);
+        updateActivityRequest.setWeekdays(weekdays);
+        return toJson(updateActivityRequest);
     }
 }

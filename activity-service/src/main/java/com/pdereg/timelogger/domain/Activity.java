@@ -24,15 +24,19 @@ public class Activity {
     public static final int MIN_NAME_SIZE = 3;
     public static final int MAX_NAME_SIZE = 30;
     public static final int MIN_REQUIRED_DURATION = 60000;
+
+    @Id
+    private String id;
+
     @Indexed
     @NotNull
     private final String accountId;
+
     @Indexed
     @NotNull
     @Size(min = MIN_NAME_SIZE, max = MAX_NAME_SIZE)
     private final String name;
-    @Id
-    private String id;
+
     @Min(MIN_REQUIRED_DURATION)
     private long requiredDuration;
 

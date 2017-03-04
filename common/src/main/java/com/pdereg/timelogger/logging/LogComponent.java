@@ -47,7 +47,7 @@ public class LogComponent {
      */
     @EventListener(ServletRequestHandledEvent.class)
     public void logHandledRequests(ServletRequestHandledEvent event) {
-        StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("url=[").append(event.getRequestUrl()).append("]; ");
         stringBuilder.append("client=[").append(event.getClientAddress()).append("]; ");
         stringBuilder.append("method=[").append(event.getMethod()).append("]; ");
@@ -55,7 +55,7 @@ public class LogComponent {
         stringBuilder.append("time=[").append(event.getProcessingTimeMillis()).append("ms]; ");
         stringBuilder.append("status=[");
 
-        Throwable throwable = event.getFailureCause();
+        final Throwable throwable = event.getFailureCause();
         if (throwable == null) {
             stringBuilder.append("OK");
         } else {

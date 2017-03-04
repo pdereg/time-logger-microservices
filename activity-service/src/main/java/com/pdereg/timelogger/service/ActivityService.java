@@ -85,6 +85,28 @@ public class ActivityService {
     }
 
     /**
+     * Updates an existing {@link Activity} instance for given {@code accountId} and {@code name}.
+     *
+     * @param accountId        ID of the account associated with the activity to update
+     * @param name             Name of the activity to update
+     * @param requiredDuration New required duration to set
+     * @param weekdays         New weekdays to set
+     * @return Updated {@link Activity} instance
+     */
+    public CompletableFuture<Activity> updateActivity(String accountId, String name, long requiredDuration,
+                                                      boolean[] weekdays) {
+
+        return findOneByAccountIdAndName(accountId, name)
+                .thenApply(activity -> activity.<ActivityNotFoundException>orElseThrow(ActivityNotFoundException::new))
+                .thenApply(activity -> {
+                    activity.setRequiredDuration(requiredDuration);
+                    activity.setWeekdays(weekdays);
+                    return activity;
+                })
+                .thenApply(activityRepository::save);
+    }
+
+    /**
      * Deletes activity of provided {@code accountId} and {@code name} from repository.
      *
      * @param accountId ID of the account associated with the activity to delete
