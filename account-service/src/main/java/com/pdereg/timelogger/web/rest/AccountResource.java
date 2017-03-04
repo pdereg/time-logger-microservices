@@ -5,10 +5,9 @@ import com.pdereg.timelogger.security.annotations.AdminOrAccountOwnerRequired;
 import com.pdereg.timelogger.security.annotations.AdminRequired;
 import com.pdereg.timelogger.security.annotations.GatewayRequired;
 import com.pdereg.timelogger.service.UserService;
-import com.pdereg.timelogger.web.rest.errors.AccountNotFoundException;
-import com.pdereg.timelogger.web.rest.errors.CreateAccountRequest;
-import com.pdereg.timelogger.web.rest.errors.InvalidCredentialsException;
-import com.pdereg.timelogger.web.rest.errors.UsernameInUseException;
+import com.pdereg.timelogger.service.error.UserNotFoundException;
+import com.pdereg.timelogger.web.rest.error.CreateAccountRequest;
+import com.pdereg.timelogger.web.rest.error.InvalidCredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -50,13 +49,7 @@ public class AccountResource {
         final String password = request.getPassword();
 
         return userService
-                .findOneByUsername(username)
-                .thenAccept(userOptional -> {
-                    if (userOptional.isPresent()) {
-                        throw new UsernameInUseException();
-                    }
-                })
-                .thenComposeAsync(unit -> userService.createUser(username, password))
+                .createUser(username, password)
                 .thenApply(this::createAccountResponse);
     }
 
@@ -82,7 +75,7 @@ public class AccountResource {
     public CompletableFuture<User> getAccount(@PathVariable String username) {
         return userService
                 .findOneByUsername(username)
-                .thenApply(user -> user.<AccountNotFoundException>orElseThrow(AccountNotFoundException::new));
+                .thenApply(user -> user.<UserNotFoundException>orElseThrow(UserNotFoundException::new));
     }
 
     /**
@@ -96,17 +89,18 @@ public class AccountResource {
     @GatewayRequired
     public CompletableFuture<Set<String>> authenticate(@PathVariable String username, @RequestParam String password) {
         return userService
-                .findOneByUsername(username)
-                .thenApply(user -> user.<InvalidCredentialsException>orElseThrow(InvalidCredentialsException::new))
-                .thenApply(user -> {
-                    if (userService.checkPassword(user, password)) {
-                        return user.getAuthorities().stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .collect(Collectors.toSet());
+                .checkPassword(username, password)
+                .thenAccept(result -> {
+                    if (!result) {
+                        throw new InvalidCredentialsException();
                     }
-
-                    throw new InvalidCredentialsException();
-                });
+                })
+                .thenComposeAsync(unit -> userService.findOneByUsername(username))
+                .thenApply(user -> user.<InvalidCredentialsException>orElseThrow(InvalidCredentialsException::new))
+                .thenApply(user -> user.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toSet())
+                );
     }
 
     /**
@@ -119,7 +113,7 @@ public class AccountResource {
     public CompletableFuture<Void> deleteAccount(@PathVariable String username) {
         return userService
                 .findOneByUsername(username)
-                .thenApply(user -> user.<AccountNotFoundException>orElseThrow(AccountNotFoundException::new))
+                .thenApply(user -> user.<UserNotFoundException>orElseThrow(UserNotFoundException::new))
                 .thenApply(User::getUsername)
                 .thenComposeAsync(userService::deleteUser);
     }

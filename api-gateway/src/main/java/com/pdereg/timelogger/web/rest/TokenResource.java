@@ -3,7 +3,7 @@ package com.pdereg.timelogger.web.rest;
 import com.pdereg.timelogger.security.jwt.JwtHandler;
 import com.pdereg.timelogger.service.AccountService;
 import com.pdereg.timelogger.utils.BasicTokenParser;
-import com.pdereg.timelogger.web.rest.errors.InvalidCredentialsException;
+import com.pdereg.timelogger.web.rest.error.InvalidCredentialsException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

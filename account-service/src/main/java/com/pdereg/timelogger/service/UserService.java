@@ -3,6 +3,8 @@ package com.pdereg.timelogger.service;
 import com.pdereg.timelogger.domain.User;
 import com.pdereg.timelogger.repository.UserRepository;
 import com.pdereg.timelogger.security.Authorities;
+import com.pdereg.timelogger.service.error.UserNotFoundException;
+import com.pdereg.timelogger.service.error.UsernameInUseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,8 +22,8 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class UserService {
 
-    private PasswordEncoder passwordEncoder;
-    private UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository) {
@@ -37,12 +39,18 @@ public class UserService {
      * @return New {@link User} instance
      */
     public CompletableFuture<User> createUser(String username, String password) {
-        User newUser = new User();
-        newUser.setUsername(username);
-        addInitialAuthorities(newUser);
-        encodeAndSetPassword(newUser, password);
+        final User user = new User();
+        user.setUsername(username);
+        addInitialAuthorities(user);
+        encodeAndSetPassword(user, password);
 
-        return CompletableFuture.supplyAsync(() -> userRepository.save(newUser));
+        return findOneByUsername(username)
+                .thenAccept(userOptional -> {
+                    if (userOptional.isPresent()) {
+                        throw new UsernameInUseException();
+                    }
+                })
+                .thenComposeAsync(unit -> CompletableFuture.supplyAsync(() -> userRepository.save(user)));
     }
 
     /**
@@ -51,7 +59,7 @@ public class UserService {
      * @return A list of all {@link User} instances
      */
     public CompletableFuture<List<User>> findAll() {
-        return CompletableFuture.supplyAsync(() -> userRepository.findAll());
+        return CompletableFuture.supplyAsync(userRepository::findAll);
     }
 
     /**
@@ -71,10 +79,8 @@ public class UserService {
      * @param password New plain password. Note that it will be hashed first before saving.
      */
     public CompletableFuture<Void> changePassword(String username, String password) {
-        CompletableFuture<Optional<User>> future = findOneByUsername(username);
-
-        return future.thenAccept(userOptional ->
-                userOptional.ifPresent(user -> {
+        return findOneByUsername(username)
+                .thenAccept(userOptional -> userOptional.ifPresent(user -> {
                     encodeAndSetPassword(user, password);
                     userRepository.save(user);
                 })
@@ -84,13 +90,15 @@ public class UserService {
     /**
      * Checks provided {@code password} for the given {@code user}.
      *
-     * @param user     {@link User} instance for whom to check provided {@code password}
+     * @param username Name of the user for whom to check provided {@code password}
      * @param password Raw password to check
      * @return {@code true} if password is correct; {@code false} otherwise
      */
-    public boolean checkPassword(User user, String password) {
-        String encodedPassword = user.getPassword();
-        return passwordEncoder.matches(password, encodedPassword);
+    public CompletableFuture<Boolean> checkPassword(String username, String password) {
+        return findOneByUsername(username)
+                .thenApply(user -> user.filter(
+                        userOptional -> passwordEncoder.matches(password, userOptional.getPassword())).isPresent()
+                );
     }
 
     /**
@@ -99,20 +107,18 @@ public class UserService {
      * @param username Name of the user to delete
      */
     public CompletableFuture<Void> deleteUser(String username) {
-        CompletableFuture<Optional<User>> future = findOneByUsername(username);
-
-        return future.thenAccept(userOptional ->
-                userOptional.ifPresent(userRepository::delete)
-        );
+        return findOneByUsername(username)
+                .thenApply(user -> user.<UserNotFoundException>orElseThrow(UserNotFoundException::new))
+                .thenAccept(userRepository::delete);
     }
 
     private void addInitialAuthorities(User user) {
-        GrantedAuthority userAuthority = new SimpleGrantedAuthority(Authorities.USER);
+        final GrantedAuthority userAuthority = new SimpleGrantedAuthority(Authorities.USER);
         user.addAuthority(userAuthority);
     }
 
     private void encodeAndSetPassword(User user, String password) {
-        String encodedPassword = passwordEncoder.encode(password);
+        final String encodedPassword = passwordEncoder.encode(password);
         user.setPassword(encodedPassword);
     }
 }

@@ -1,4 +1,4 @@
-package com.pdereg.timelogger.web.rest.errors;
+package com.pdereg.timelogger.web.rest.error;
 
 import com.pdereg.timelogger.domain.User;
 
@@ -19,10 +19,6 @@ public class CreateAccountRequest {
     @NotNull
     @Size(min = 8, max = User.PASSWORD_SIZE)
     private String password;
-
-    public CreateAccountRequest() {
-
-    }
 
     public String getUsername() {
         return username;

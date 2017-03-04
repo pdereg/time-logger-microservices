@@ -85,6 +85,16 @@ public class UserServiceIntTest {
         assertFalse(authorities.isEmpty());
     }
 
+    @Test(expected = Exception.class)
+    public void createUser_throwsExceptionIfUsernameIsAlreadyTaken() throws Exception {
+        String username = generateRandomPassword();
+        String password = generateRandomPassword();
+
+        for (int i = 0; i < 2; ++i) {
+            userService.createUser(username, password).get();
+        }
+    }
+
     @Test
     public void findAll_returnsAllUsersFromRepository() throws Exception {
         String username = generateRandomUsername();
@@ -146,30 +156,44 @@ public class UserServiceIntTest {
     public void checkPassword_returnsTrueIfProvidedPasswordIsCorrect() throws Exception {
         String username = generateRandomUsername();
         String password = generateRandomPassword();
-        User newUser = userService.createUser(username, password).get();
+        userService.createUser(username, password).get();
 
-        assertTrue(userService.checkPassword(newUser, password));
+        assertTrue(userService.checkPassword(username, password).get());
     }
 
     @Test
     public void checkPassword_returnsFalseIfProvidedPasswordIsIncorrect() throws Exception {
         String username = generateRandomUsername();
         String password = generateRandomPassword();
-        User newUser = userService.createUser(username, password).get();
+        userService.createUser(username, password).get();
 
         String incorrectPassword = generateRandomPassword();
-        assertFalse(userService.checkPassword(newUser, incorrectPassword));
+        assertFalse(userService.checkPassword(username, incorrectPassword).get());
+    }
+
+    @Test
+    public void checkPassword_returnsFalseIfUserDoesNotExist() throws Exception {
+        String username = generateRandomUsername();
+        String password = generateRandomPassword();
+
+        assertFalse(userService.checkPassword(username, password).get());
     }
 
     @Test
     public void deleteUser_removesUserFromRepository() throws Exception {
         String username = generateRandomUsername();
         String password = generateRandomPassword();
-        userService.changePassword(username, password).get();
+        userService.createUser(username, password).get();
 
         userService.deleteUser(username).get();
         Optional<User> fetchedUser = userRepository.findOneByUsername(username);
 
         assertFalse(fetchedUser.isPresent());
+    }
+
+    @Test(expected = Exception.class)
+    public void deleteUser_throwsExceptionIfUserDoesNotExist() throws Exception {
+        String username = generateRandomUsername();
+        userService.deleteUser(username).get();
     }
 }
