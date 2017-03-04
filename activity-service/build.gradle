@@ -37,4 +37,5 @@ dependencies {
 
     testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo', version: "${embed_mongo_version}"
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${spring_boot_version}"
+    testCompile group: 'org.springframework.security', name: 'spring-security-test', version: "${spring_security_version}"
 }

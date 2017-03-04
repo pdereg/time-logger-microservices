@@ -54,7 +54,7 @@ public class AccountResource {
     }
 
     /**
-     * Fetches and returns all {@link User} instance.
+     * Fetches and returns all {@link User} instances.
      *
      * @return A list of all {@link User} instances
      */

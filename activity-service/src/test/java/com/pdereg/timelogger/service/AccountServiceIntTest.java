@@ -135,4 +135,25 @@ public class AccountServiceIntTest {
         assertTrue(fetchedActivity.isPresent());
         assertEquals(activity, fetchedActivity.get());
     }
+
+    @Test
+    public void deleteActivity_removesActivityFromRepository() throws Exception {
+        String accountId = generateRandomString(10);
+        String name = generateRandomActivityName();
+        long requiredDuration = generateActivityDuration();
+        boolean[] weekdays = generateActivityWeekdays();
+        activityService.createActivity(accountId, name, requiredDuration, weekdays).get();
+
+        activityService.deleteActivity(accountId, name).get();
+        Optional<Activity> fetchedActivity = activityRepository.findOneByAccountIdAndName(accountId, name);
+
+        assertFalse(fetchedActivity.isPresent());
+    }
+
+    @Test(expected = Exception.class)
+    public void deleteActivity_throwsExceptionIfActivityDoesNotExist() throws Exception {
+        String accountId = generateRandomString(10);
+        String name = generateRandomActivityName();
+        activityService.deleteActivity(accountId, name).get();
+    }
 }

@@ -3,6 +3,7 @@ package com.pdereg.timelogger.service;
 import com.pdereg.timelogger.domain.Activity;
 import com.pdereg.timelogger.repository.ActivityRepository;
 import com.pdereg.timelogger.service.error.ActivityNameInUseException;
+import com.pdereg.timelogger.service.error.ActivityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,5 +82,17 @@ public class ActivityService {
      */
     public CompletableFuture<Optional<Activity>> findOneByAccountIdAndName(String accountId, String name) {
         return CompletableFuture.supplyAsync(() -> activityRepository.findOneByAccountIdAndName(accountId, name));
+    }
+
+    /**
+     * Deletes activity of provided {@code accountId} and {@code name} from repository.
+     *
+     * @param accountId ID of the account associated with the activity to delete
+     * @param name      Name of the activity to delete
+     */
+    public CompletableFuture<Void> deleteActivity(String accountId, String name) {
+        return findOneByAccountIdAndName(accountId, name)
+                .thenApply(activity -> activity.<ActivityNotFoundException>orElseThrow(ActivityNotFoundException::new))
+                .thenAccept(activityRepository::delete);
     }
 }
