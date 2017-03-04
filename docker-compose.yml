@@ -25,3 +25,14 @@ services:
       - account-database
   account-database:
     image: mongo
+  activity-service:
+    image: activity-service
+    environment:
+      - MONGODB_HOST=activity-database
+      - EUREKA_HOST=discovery-server
+      - TIME_LOGGER_SECRET=${TIME_LOGGER_SECRET}
+    depends_on:
+      - discovery-server
+      - activity-database
+  activity-database:
+    image: mongo

@@ -1,6 +1,10 @@
 server:
   port: 8080
 
+spring:
+  application:
+    name: api-gateway
+
 eureka:
   client:
     serviceUrl:
@@ -11,6 +15,11 @@ zuul:
     accounts:
       path: /api/accounts/**
       serviceId: account-service
+      stripPrefix: false
+      sensitiveHeaders: Cookie,Set-Cookie
+    activities:
+      path: /api/activities/**
+      serviceId: activity-service
       stripPrefix: false
       sensitiveHeaders: Cookie,Set-Cookie
 

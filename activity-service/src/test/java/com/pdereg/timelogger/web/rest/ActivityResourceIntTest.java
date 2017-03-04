@@ -279,7 +279,7 @@ public class ActivityResourceIntTest {
     private byte[] createActivityRequest(String name, long requiredDuration, boolean[] weekdays) {
         CreateActivityRequest createActivityRequest = new CreateActivityRequest();
         createActivityRequest.setName(name);
-        createActivityRequest.setRequiredTime(requiredDuration);
+        createActivityRequest.setRequiredDuration(requiredDuration);
         createActivityRequest.setWeekdays(weekdays);
         return toJson(createActivityRequest);
     }

@@ -6,6 +6,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * An HTTP request body for activity creation.
+ */
 public class CreateActivityRequest {
 
     private static final int WEEKDAYS_COUNT = 7;
@@ -15,7 +18,7 @@ public class CreateActivityRequest {
     private String name;
 
     @Min(value = Activity.MIN_REQUIRED_DURATION)
-    private long requiredTime;
+    private long requiredDuration;
 
     @Size(min = WEEKDAYS_COUNT, max = WEEKDAYS_COUNT)
     private boolean[] weekdays;
@@ -28,12 +31,12 @@ public class CreateActivityRequest {
         this.name = name;
     }
 
-    public long getRequiredTime() {
-        return requiredTime;
+    public long getRequiredDuration() {
+        return requiredDuration;
     }
 
-    public void setRequiredTime(long requiredTime) {
-        this.requiredTime = requiredTime;
+    public void setRequiredDuration(long requiredDuration) {
+        this.requiredDuration = requiredDuration;
     }
 
     public boolean[] getWeekdays() {

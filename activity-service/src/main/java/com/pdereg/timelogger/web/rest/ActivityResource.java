@@ -46,7 +46,7 @@ public class ActivityResource {
 
         final String accountId = principal.getName();
         final String name = request.getName();
-        final long requiredTime = request.getRequiredTime();
+        final long requiredTime = request.getRequiredDuration();
         final boolean[] weekdays = request.getWeekdays();
 
         return activityService

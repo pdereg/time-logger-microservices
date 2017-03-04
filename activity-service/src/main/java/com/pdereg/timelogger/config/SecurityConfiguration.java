@@ -5,14 +5,11 @@ import com.pdereg.timelogger.security.jwt.JwtFilter;
 import com.pdereg.timelogger.security.jwt.JwtHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntryPoint;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -27,11 +24,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     public SecurityConfiguration(JwtHandler jwtHandler) {
         this.jwtHandler = jwtHandler;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Override
