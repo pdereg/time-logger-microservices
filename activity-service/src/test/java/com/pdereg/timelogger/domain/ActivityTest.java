@@ -14,6 +14,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import javax.validation.ConstraintViolation;
 import java.util.Set;
 
+import static com.pdereg.timelogger.TestUtils.*;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -28,36 +29,18 @@ public class ActivityTest {
     @Before
     public void setUp() {
         String accountId = TestUtils.generateRandomString(10);
-        String name = TestUtils.generateRandomString(Activity.MIN_NAME_SIZE);
+        String name = generateRandomActivityName();
         activity = new Activity(accountId, name);
     }
 
     @Test
     public void constructor_setsAttributesCorrectly() {
         String accountId = TestUtils.generateRandomString(10);
-        String name = TestUtils.generateRandomString(Activity.MIN_NAME_SIZE);
+        String name = generateRandomActivityName();
         activity = new Activity(accountId, name);
 
         assertEquals(accountId, activity.getAccountId());
         assertEquals(name, activity.getName());
-    }
-
-    @Test
-    public void constructor_generatesConstraintViolationIfAccountIdIsNull() {
-        String name = TestUtils.generateRandomString(Activity.MIN_NAME_SIZE);
-        activity = new Activity(null, name);
-
-        Set<ConstraintViolation<Activity>> violations = getConstraintViolations();
-        assertFalse(violations.isEmpty());
-    }
-
-    @Test
-    public void constructor_generatesConstraintViolationIfNameIsNull() {
-        String accountId = TestUtils.generateRandomString(10);
-        activity = new Activity(accountId, null);
-
-        Set<ConstraintViolation<Activity>> violations = getConstraintViolations();
-        assertFalse(violations.isEmpty());
     }
 
     @Test
@@ -81,17 +64,17 @@ public class ActivityTest {
     }
 
     @Test
-    public void setRequiredTime_setsNewValueCorrectly() {
-        long requiredTime = Activity.MIN_REQUIRED_TIME * 10;
-        activity.setRequiredTime(requiredTime);
+    public void setRequiredDuration_setsNewValueCorrectly() {
+        long requiredDuration = generateActivityDuration();
+        activity.setRequiredDuration(requiredDuration);
 
-        assertEquals(requiredTime, activity.getRequiredTime());
+        assertEquals(requiredDuration, activity.getRequiredDuration());
     }
 
     @Test
-    public void setRequiredTime_generatesConstraintViolationIfNewValueIsTooShort() {
-        long requiredTime = Activity.MIN_REQUIRED_TIME - 1;
-        activity.setRequiredTime(requiredTime);
+    public void setRequiredDuration_generatesConstraintViolationIfNewValueIsTooShort() {
+        long requiredDuration = Activity.MIN_REQUIRED_DURATION - 1;
+        activity.setRequiredDuration(requiredDuration);
 
         Set<ConstraintViolation<Activity>> violations = getConstraintViolations();
         assertFalse(violations.isEmpty());
@@ -99,7 +82,7 @@ public class ActivityTest {
 
     @Test
     public void setWeekdays_setsNewValueCorrectly() {
-        boolean[] weekdays = new boolean[]{false, true, true, false, false, true, true};
+        boolean[] weekdays = generateActivityWeekdays();
         activity.setWeekdays(weekdays);
 
         assertArrayEquals(weekdays, activity.getWeekdays());
@@ -111,6 +94,28 @@ public class ActivityTest {
         activity.setWeekdays(weekdays);
 
         assertNotEquals(weekdays, activity.getWeekdays());
+    }
+
+    @Test
+    @SuppressWarnings("EqualsWithItself")
+    public void equals_returnTrueIfObjectsAreSame() {
+        assertTrue(activity.equals(activity));
+    }
+
+    @Test
+    public void equals_returnsTrueIfObjectsHaveEqualAccountIdAndName() {
+        String originalAccountId = activity.getAccountId();
+        String originalName = activity.getName();
+
+        Activity newActivity = new Activity(originalAccountId, originalName);
+
+        assertTrue(activity.equals(newActivity));
+    }
+
+    @Test
+    @SuppressWarnings("ObjectEqualsNull")
+    public void equals_returnsFalseForNullValue() {
+        assertFalse(activity.equals(null));
     }
 
     private Set<ConstraintViolation<Activity>> getConstraintViolations() {

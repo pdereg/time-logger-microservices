@@ -54,7 +54,7 @@ public class UserService {
     }
 
     /**
-     * Fetches and returns all {@link User} instances from database.
+     * Fetches and returns all {@link User} instances from repository.
      *
      * @return A list of all {@link User} instances
      */
@@ -88,7 +88,7 @@ public class UserService {
     }
 
     /**
-     * Checks provided {@code password} for the given {@code user}.
+     * Checks provided {@code password} for a given {@code username}.
      *
      * @param username Name of the user for whom to check provided {@code password}
      * @param password Raw password to check
@@ -102,7 +102,7 @@ public class UserService {
     }
 
     /**
-     * Deletes user of provided {@code username} from the database.
+     * Deletes user of provided {@code username} from repository.
      *
      * @param username Name of the user to delete
      */

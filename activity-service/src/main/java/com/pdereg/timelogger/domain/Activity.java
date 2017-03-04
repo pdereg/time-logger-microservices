@@ -22,7 +22,7 @@ public class Activity {
 
     public static final int MIN_NAME_SIZE = 3;
     public static final int MAX_NAME_SIZE = 30;
-    public static final int MIN_REQUIRED_TIME = 60000;
+    public static final int MIN_REQUIRED_DURATION = 60000;
 
     @Indexed
     @NotNull
@@ -33,8 +33,8 @@ public class Activity {
     @Size(min = MIN_NAME_SIZE, max = MAX_NAME_SIZE)
     private final String name;
 
-    @Min(MIN_REQUIRED_TIME)
-    private long requiredTime;
+    @Min(MIN_REQUIRED_DURATION)
+    private long requiredDuration;
 
     @JsonIgnore
     @Min(0)
@@ -60,19 +60,19 @@ public class Activity {
     }
 
     /**
-     * @return Required time (per day) for the duration of the activity. Expressed in milliseconds
+     * @return Required duration (per day). Expressed in milliseconds
      */
-    public long getRequiredTime() {
-        return requiredTime;
+    public long getRequiredDuration() {
+        return requiredDuration;
     }
 
     /**
-     * Sets a new required time for the duration of the activity.
+     * Sets a new required duration for the activity.
      *
-     * @param requiredTime New required time to set
+     * @param requiredDuration New required duration to set
      */
-    public void setRequiredTime(long requiredTime) {
-        this.requiredTime = requiredTime;
+    public void setRequiredDuration(long requiredDuration) {
+        this.requiredDuration = requiredDuration;
     }
 
     /**
@@ -115,5 +115,33 @@ public class Activity {
                 weekdays &= ~weekday;
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Activity activity = (Activity) o;
+
+        if (!accountId.equals(activity.accountId)) return false;
+        return name.equals(activity.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = accountId.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Activity{" +
+                "accountId='" + accountId + '\'' +
+                ", name='" + name + '\'' +
+                ", requiredDuration=" + requiredDuration +
+                ", weekdays=" + weekdays +
+                '}';
     }
 }
