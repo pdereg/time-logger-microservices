@@ -81,10 +81,10 @@ public class UserService {
     public CompletableFuture<Void> changePassword(String username, String password) {
         return findOneByUsername(username)
                 .thenAccept(userOptional -> userOptional.ifPresent(user -> {
-                    encodeAndSetPassword(user, password);
-                    userRepository.save(user);
-                })
-        );
+                            encodeAndSetPassword(user, password);
+                            userRepository.save(user);
+                        })
+                );
     }
 
     /**
