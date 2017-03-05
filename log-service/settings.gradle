@@ -1,2 +1,3 @@
 rootProject.name = 'log-service'
 
+include '../:common'

@@ -28,7 +28,7 @@ public class ActivityService {
     /**
      * Creates and returns a new {@link Activity} instance.
      *
-     * @param accountId        ID of the user associated with the activity
+     * @param accountId        ID of the user account associated with the activity
      * @param name             Name of the activity
      * @param requiredDuration Required duration (per day). Expressed in milliseconds
      * @param weekdays         An array of weekdays where element at each position describes whether the activity should be
@@ -66,7 +66,7 @@ public class ActivityService {
     /**
      * Fetches and returns all {@link Activity} instances for a given {@code accountId}.
      *
-     * @param accountId ID of the account associated with the activities to return
+     * @param accountId ID of the user account associated with the activities to return
      * @return A list of all {@link Activity} instances associated with provided {@code accountId}
      */
     public CompletableFuture<List<Activity>> findAllByAccountId(String accountId) {

@@ -23,7 +23,7 @@ public class Activity {
 
     public static final int MIN_NAME_SIZE = 3;
     public static final int MAX_NAME_SIZE = 30;
-    public static final int MIN_REQUIRED_DURATION = 60000;
+    public static final long MIN_REQUIRED_DURATION = 60000L;
 
     @Id
     private String id;

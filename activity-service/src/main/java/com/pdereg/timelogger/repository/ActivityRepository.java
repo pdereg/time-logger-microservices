@@ -16,7 +16,7 @@ public interface ActivityRepository extends MongoRepository<Activity, String> {
     /**
      * Finds and returns all {@link Activity} instances for given {@code accountId}.
      *
-     * @param accountId ID of the user associated with activities to return
+     * @param accountId ID of the user account associated with activities to return
      * @return A list of {@link Activity} instances
      */
     List<Activity> findAllByAccountId(String accountId);
