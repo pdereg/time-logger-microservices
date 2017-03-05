@@ -18,18 +18,23 @@ public class Log {
     public static final long MIN_DURATION = 1000L;
 
     private static final long MILLIS_IN_A_DAY = 1000L * 60 * 60 * 24;
+
+    @Id
+    private String id;
+
     @Indexed
     @NotNull
     private final String accountId;
+
     @Indexed
     @NotNull
     private final String activityId;
+
     @Min(value = MIN_START_TIME)
     private final long startTime;
+
     @Min(value = MIN_DURATION)
     private final long duration;
-    @Id
-    private String id;
 
     public Log(String accountId, String activityId, long startTime, long duration) {
         this.accountId = accountId;

@@ -79,7 +79,7 @@ public class LogService {
      *
      * @param id ID of the log to delete
      */
-    public CompletableFuture<Void> removeLog(String id) {
+    public CompletableFuture<Void> deleteLog(String id) {
         return findOneById(id)
                 .thenApply(log -> log.<LogNotFoundException>orElseThrow(LogNotFoundException::new))
                 .thenAccept(logRepository::delete);
