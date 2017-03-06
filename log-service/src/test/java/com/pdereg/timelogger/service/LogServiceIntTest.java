@@ -1,13 +1,11 @@
 package com.pdereg.timelogger.service;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.pdereg.timelogger.Application;
 import com.pdereg.timelogger.config.CommonConfiguration;
 import com.pdereg.timelogger.domain.Log;
 import com.pdereg.timelogger.repository.LogRepository;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.pdereg.timelogger.TestUtils.generateDuration;
 import static com.pdereg.timelogger.TestUtils.generateRandomString;
 import static org.junit.Assert.*;
@@ -29,9 +26,6 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = Application.class)
 @TestPropertySource(properties = {CommonConfiguration.SECRET_ENV_KEY + "=test1234"})
 public class LogServiceIntTest {
-
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().bindAddress("localhost").port(8083));
 
     @Autowired
     private MongoTemplate mongoTemplate;

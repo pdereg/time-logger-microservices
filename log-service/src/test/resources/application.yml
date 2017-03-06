@@ -2,6 +2,6 @@ eureka:
   client:
     enabled: false
 
-account-service:
+activity-service:
   ribbon:
     listOfServers: localhost:8083

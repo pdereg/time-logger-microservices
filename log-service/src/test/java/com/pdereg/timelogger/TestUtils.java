@@ -13,6 +13,10 @@ public class TestUtils {
 
     }
 
+    public static String generateRandomAuthHeader() {
+        return "Bearer " + generateRandomString(20);
+    }
+
     public static String generateRandomString(int size) {
         return RandomStringUtils.randomAlphanumeric(size);
     }

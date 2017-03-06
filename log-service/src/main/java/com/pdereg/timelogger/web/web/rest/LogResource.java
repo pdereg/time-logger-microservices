@@ -7,9 +7,7 @@ import com.pdereg.timelogger.web.web.rest.model.CreateLogRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -20,6 +18,8 @@ import java.util.concurrent.CompletableFuture;
 /**
  * REST controller for logs.
  */
+@RestController
+@RequestMapping("/api")
 public class LogResource {
 
     private final ActivityService activityService;
