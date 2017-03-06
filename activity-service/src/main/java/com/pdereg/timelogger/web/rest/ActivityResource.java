@@ -69,7 +69,7 @@ public class ActivityResource {
      * Fetches and returns all {@link Activity} instances for an account with provided {@code username}.
      *
      * @param username Name of the account associated with the activities to return
-     * @return A list of all {@link Activity} instances for an account of provided {@code username}
+     * @return A list of all {@link Activity} instances for an account with provided {@code username}
      */
     @GetMapping("/activities/{username}")
     @AdminOrAccountOwnerRequired
