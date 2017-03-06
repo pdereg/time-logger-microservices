@@ -19,13 +19,13 @@ public class TestUtils {
     }
 
     public static String decodeBase64(String encodedString) {
-        byte[] encodedAsBytes = encodedString.getBytes();
+        final byte[] encodedAsBytes = encodedString.getBytes();
         return new String(Base64.decode(encodedAsBytes));
     }
 
     public static <T> Map<String, T> fromJson(String jsonContent) {
-        TypeReference<Map<String, T>> reference = new TypeReference<Map<String, T>>() {};
-        ObjectMapper objectMapper = new ObjectMapper();
+        final TypeReference<Map<String, T>> reference = new TypeReference<Map<String, T>>() {};
+        final ObjectMapper objectMapper = new ObjectMapper();
 
         try {
             return objectMapper.readValue(jsonContent, reference);

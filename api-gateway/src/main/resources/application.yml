@@ -22,6 +22,11 @@ zuul:
       serviceId: activity-service
       stripPrefix: false
       sensitiveHeaders: Cookie,Set-Cookie
+    logs:
+      path: /api/logs/**
+      serviceId: log-service
+      stripPrefix: false
+      sensitiveHeaders: Cookie,Set-Cookie
 
 logging:
   level:

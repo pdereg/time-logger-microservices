@@ -1,0 +1,7 @@
+eureka:
+  client:
+    enabled: false
+
+account-service:
+  ribbon:
+    listOfServers: localhost:8083

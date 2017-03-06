@@ -36,8 +36,10 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: "${spring_boot_version}"
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${spring_boot_version}"
     compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-eureka', version: "${spring_cloud_version}"
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-feign', version: "${spring_cloud_version}"
 
     testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo', version: "${embed_mongo_version}"
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${spring_boot_version}"
     testCompile group: 'org.springframework.security', name: 'spring-security-test', version: "${spring_security_version}"
+    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version: "${wiremock_version}"
 }

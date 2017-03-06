@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface ActivityRepository extends MongoRepository<Activity, String> {
 
     /**
-     * Finds and returns all {@link Activity} instances for given {@code accountId}.
+     * Finds and returns all {@link Activity} instances with given {@code accountId}.
      *
      * @param accountId ID of the user account associated with activities to return
      * @return A list of {@link Activity} instances
@@ -22,7 +22,7 @@ public interface ActivityRepository extends MongoRepository<Activity, String> {
     List<Activity> findAllByAccountId(String accountId);
 
     /**
-     * Finds and returns an {@link Activity} instance for given {@code accountId} and {@code name}.
+     * Finds and returns an {@link Activity} instance with given {@code accountId} and {@code name}.
      *
      * @param accountId ID of the user associated with the activity to return
      * @param name      Name of the user's activity

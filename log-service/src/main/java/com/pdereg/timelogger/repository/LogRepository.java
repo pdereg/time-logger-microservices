@@ -13,7 +13,7 @@ import java.util.List;
 public interface LogRepository extends MongoRepository<Log, String> {
 
     /**
-     * Finds and returns all {@link Log} instances for given {@code accountId}.
+     * Finds and returns all {@link Log} instances with given {@code accountId}.
      *
      * @param accountId ID of the user account associated with logs to return
      * @return A list of {@link Log} instances
@@ -21,7 +21,7 @@ public interface LogRepository extends MongoRepository<Log, String> {
     List<Log> findAllByAccountId(String accountId);
 
     /**
-     * Finds and returns all {@link Log} instances for given {@code accountId} and {@code activityId}.
+     * Finds and returns all {@link Log} instances with given {@code accountId} and {@code activityId}.
      *
      * @param accountId  ID of the user account associated with logs to return
      * @param activityId ID of the activity associated with the logs to return

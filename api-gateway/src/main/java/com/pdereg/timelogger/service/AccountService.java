@@ -34,7 +34,7 @@ public class AccountService {
      * Authenticates user with provided {@code username} and {@code password}.
      *
      * @param username Name of the user to authenticate
-     * @param password User's password
+     * @param password User's raw password
      * @return An {@link Authentication} instance containing user's credentials or error
      */
     public CompletableFuture<Authentication> authenticate(String username, String password) {

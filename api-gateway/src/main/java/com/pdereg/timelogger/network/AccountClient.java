@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 /**
- * Client for the account-service microservice.
+ * Network client for the account-service.
  */
 @Component
 @FeignClient("account-service")
 public interface AccountClient {
 
     /**
-     * Authenticates user of provided {@code username}.
+     * Authenticates user with provided {@code username}.
      *
      * @param authorizationHeaderValue Gateway's authorization header
      * @param username                 Name of the user to authenticate

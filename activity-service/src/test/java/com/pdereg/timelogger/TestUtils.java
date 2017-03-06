@@ -28,7 +28,7 @@ public class TestUtils {
     }
 
     public static <T> byte[] toJson(T object) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectMapper objectMapper = new ObjectMapper();
 
         try {
             return objectMapper.writeValueAsBytes(object);

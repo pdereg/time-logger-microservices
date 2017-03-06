@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface UserRepository extends MongoRepository<User, String> {
 
     /**
-     * Finds and returns a {@link User} instance of given {@code username}.
+     * Finds and returns a {@link User} instance with given {@code username}.
      *
      * @param username Name of the user to return
      * @return An optional {@link User} instance

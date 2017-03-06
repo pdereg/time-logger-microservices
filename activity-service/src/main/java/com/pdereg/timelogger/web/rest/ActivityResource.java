@@ -78,7 +78,7 @@ public class ActivityResource {
     }
 
     /**
-     * Fetches and returns an {@link Activity} instance for gives {@code username} and {@code name}.
+     * Fetches and returns an {@link Activity} instance with given {@code username} and {@code name}.
      *
      * @param username Name of the account associated with the activity to return
      * @param name     Name of the activity to return
@@ -112,7 +112,7 @@ public class ActivityResource {
     }
 
     /**
-     * Deletes an existing {@link Activity} instance for given {@code username} and {@code name}.
+     * Deletes an existing {@link Activity} instance with given {@code username} and {@code name}.
      *
      * @param username Name of the account associated with the activity to delete
      * @param name     Name of the activity to delete

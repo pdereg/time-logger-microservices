@@ -22,12 +22,12 @@ public class TestUtils {
     }
 
     public static long generateStartTime(long duration) {
-        Calendar calendar = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance();
         return calendar.getTimeInMillis() - duration;
     }
 
     public static <T> byte[] toJson(T object) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectMapper objectMapper = new ObjectMapper();
 
         try {
             return objectMapper.writeValueAsBytes(object);

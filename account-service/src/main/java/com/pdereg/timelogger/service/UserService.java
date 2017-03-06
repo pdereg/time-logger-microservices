@@ -63,7 +63,7 @@ public class UserService {
     }
 
     /**
-     * Fetches and returns a {@link User} instance for a given {@code username}.
+     * Fetches and returns a {@link User} instance with a given {@code username}.
      *
      * @param username Name of the user to fetch
      * @return Optional {@link User} instance for a given {@code username}
@@ -73,7 +73,7 @@ public class UserService {
     }
 
     /**
-     * Changes password for a user of given {@code username}.
+     * Changes password for a user with a given {@code username}.
      *
      * @param username Name of the user for whom to change the password
      * @param password New plain password. Note that it will be hashed first before saving.
@@ -102,7 +102,7 @@ public class UserService {
     }
 
     /**
-     * Deletes user of provided {@code username} from repository.
+     * Deletes user with provided {@code username} from repository.
      *
      * @param username Name of the user to delete
      */

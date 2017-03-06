@@ -42,11 +42,11 @@ public class AccountServiceIntTest {
 
     @Test
     public void authenticate_returnsCorrectSetOfAuthorities() throws Exception {
-        final Set<String> authorities = Collections.singleton(Authorities.USER);
+        Set<String> authorities = Collections.singleton(Authorities.USER);
         mockAccountService(authorities, 200);
 
-        final Authentication authentication = accountService.authenticate("test", "test").get();
-        final Set<String> fetchedAuthorities = authentication.getAuthorities()
+        Authentication authentication = accountService.authenticate("test", "test").get();
+        Set<String> fetchedAuthorities = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::toString)
                 .collect(Collectors.toSet());
@@ -56,14 +56,14 @@ public class AccountServiceIntTest {
 
     @Test(expected = ExecutionException.class)
     public void authenticate_throwsExceptionIfCredentialsAreIncorrect() throws Exception {
-        final Set<String> authorities = Collections.emptySet();
+        Set<String> authorities = Collections.emptySet();
         mockAccountService(authorities, 400);
 
         accountService.authenticate("test", "test").get();
     }
 
     private void mockAccountService(Set<String> authorities, int status) {
-        final byte[] body = TestUtils.toJson(authorities);
+        byte[] body = TestUtils.toJson(authorities);
 
         stubFor(get(urlMatching("/api/accounts/([a-zA-Z0-9]+)/authenticate\\?password=(.+)"))
                 .withHeader("Authorization", equalTo(authorizationToken))

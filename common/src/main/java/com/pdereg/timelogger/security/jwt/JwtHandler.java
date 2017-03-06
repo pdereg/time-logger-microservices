@@ -43,7 +43,7 @@ public class JwtHandler {
      * @see JwtHandler#createToken(Authentication, Date)
      */
     public String createToken(Authentication authentication) {
-        Date now = new Date();
+        final Date now = new Date();
         return createToken(authentication, now);
     }
 
@@ -54,12 +54,12 @@ public class JwtHandler {
      * @return Newly created JSON Web Token
      */
     public String createToken(Authentication authentication, Date issuedAt) {
-        String username = authentication.getName();
+        final String username = authentication.getName();
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        String parsedAuthorities = parseAuthorities(authorities);
+        final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        final String parsedAuthorities = parseAuthorities(authorities);
 
-        Date validity = newTokenValidity(issuedAt);
+        final Date validity = newTokenValidity(issuedAt);
 
         return Jwts.builder()
                 .setIssuer(issuer)
@@ -79,15 +79,15 @@ public class JwtHandler {
      * @return An {@link Authentication} instance if validation is successful
      */
     public Optional<Authentication> validateToken(String rawToken) {
-        Optional<Claims> claims = parseToken(rawToken);
+        final Optional<Claims> claims = parseToken(rawToken);
         if (!claims.isPresent()) {
             return Optional.empty();
         }
 
-        String username = claims.get().getSubject();
-        Collection<? extends GrantedAuthority> authorities = parseAuthorities(claims.get());
+        final String username = claims.get().getSubject();
+        final Collection<? extends GrantedAuthority> authorities = parseAuthorities(claims.get());
 
-        User user = new User(username, "", authorities);
+        final User user = new User(username, "", authorities);
         return Optional.of(new UsernamePasswordAuthenticationToken(user, "", authorities));
     }
 
@@ -98,15 +98,15 @@ public class JwtHandler {
     }
 
     private Date newTokenValidity(Date from) {
-        long tokenDurationAsMillis = tokenValidity.toMillis();
-        long fromMillis = from.getTime();
+        final long tokenDurationAsMillis = tokenValidity.toMillis();
+        final long fromMillis = from.getTime();
 
         return new Date(fromMillis + tokenDurationAsMillis);
     }
 
     private Optional<Claims> parseToken(String rawToken) {
         try {
-            Claims claims = Jwts.parser()
+            final Claims claims = Jwts.parser()
                     .setSigningKey(secretKey)
                     .parseClaimsJws(rawToken)
                     .getBody();
@@ -118,7 +118,7 @@ public class JwtHandler {
     }
 
     private Collection<? extends GrantedAuthority> parseAuthorities(Claims claims) {
-        String[] rawAuthorities = claims.get(AUTHORITIES_KEY).toString().split(",");
+        final String[] rawAuthorities = claims.get(AUTHORITIES_KEY).toString().split(",");
 
         return Arrays.stream(rawAuthorities)
                 .map(SimpleGrantedAuthority::new)

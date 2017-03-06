@@ -63,11 +63,11 @@ public class TokenResourceIntTest {
 
     @Test
     public void getToken_returnsOkIfAllCorrect() throws Exception {
-        final String username = "test";
-        final String password = "test";
+        String username = "test";
+        String password = "test";
 
-        final String basicToken = TestUtils.createBasicToken(username, password);
-        final Authentication authentication = createAuthentication(username);
+        String basicToken = TestUtils.createBasicToken(username, password);
+        Authentication authentication = createAuthentication(username);
 
         mockAccountService(authentication);
 
@@ -76,7 +76,7 @@ public class TokenResourceIntTest {
                         .header("Authorization", "Basic " + basicToken))
                 .andReturn();
 
-        final String expectedToken = jwtHandler.createToken(authentication);
+        String expectedToken = jwtHandler.createToken(authentication);
 
         restAccountMockMvc.perform(asyncDispatch(result))
                 .andExpect(status().isOk())
@@ -85,7 +85,7 @@ public class TokenResourceIntTest {
 
     @Test
     public void getToken_returnsClientErrorIfTokenIsMalformed() throws Exception {
-        final String basicToken = TestUtils.generateRandomString(10);
+        String basicToken = TestUtils.generateRandomString(10);
 
         restAccountMockMvc.perform(
                 get("/api/token")
@@ -95,7 +95,7 @@ public class TokenResourceIntTest {
 
     @Test
     public void getToken_returnsClientErrorIfExceptionIsThrownFromTheClient() throws Exception {
-        final String basicToken = TestUtils.createBasicToken("test", "test");
+        String basicToken = TestUtils.createBasicToken("test", "test");
         mockAccountService(new RuntimeException());
 
         MvcResult result = restAccountMockMvc.perform(
@@ -108,19 +108,19 @@ public class TokenResourceIntTest {
     }
 
     private Authentication createAuthentication(String username) {
-        final User user = new User(username, "", Collections.emptySet());
+        User user = new User(username, "", Collections.emptySet());
         return new UsernamePasswordAuthenticationToken(user, "", Collections.emptySet());
     }
 
     private void mockAccountService(Authentication authentication) {
-        final CompletableFuture<Authentication> response = CompletableFuture.completedFuture(authentication);
+        CompletableFuture<Authentication> response = CompletableFuture.completedFuture(authentication);
 
         when(accountService.authenticate(anyString(), anyString()))
                 .thenReturn(response);
     }
 
     private void mockAccountService(RuntimeException throwable) {
-        final CompletableFuture<Authentication> response = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<Authentication> response = CompletableFuture.supplyAsync(() -> {
             throw throwable;
         });
 

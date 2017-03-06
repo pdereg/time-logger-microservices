@@ -42,7 +42,7 @@ public class LogService {
     }
 
     /**
-     * Fetches and returns all {@link Log} instances for a given {@code accountId}.
+     * Fetches and returns all {@link Log} instances with a given {@code accountId}.
      *
      * @param accountId ID of the user account associated with the logs to return
      * @return A list of all {@link Log} instances for provided {@code accountId}
@@ -52,7 +52,7 @@ public class LogService {
     }
 
     /**
-     * Fetches and returns all {@link Log} instances for a given {@code accountID} and {@code activityId}.
+     * Fetches and returns all {@link Log} instances with given {@code accountID} and {@code activityId}.
      *
      * @param accountId  ID of the user account associated with the logs to return
      * @param activityId ID of the activity associated with the logs to return

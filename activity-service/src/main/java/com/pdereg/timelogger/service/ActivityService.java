@@ -64,7 +64,7 @@ public class ActivityService {
     }
 
     /**
-     * Fetches and returns all {@link Activity} instances for a given {@code accountId}.
+     * Fetches and returns all {@link Activity} instances with a given {@code accountId}.
      *
      * @param accountId ID of the user account associated with the activities to return
      * @return A list of all {@link Activity} instances associated with provided {@code accountId}
@@ -74,7 +74,7 @@ public class ActivityService {
     }
 
     /**
-     * Fetches and returns an {@link Activity} instance for given {@code accountId} and {@code name}.
+     * Fetches and returns an {@link Activity} instance with given {@code accountId} and {@code name}.
      *
      * @param accountId ID of the account associated with the activity to return
      * @param name      Name of the activity to return
@@ -85,7 +85,7 @@ public class ActivityService {
     }
 
     /**
-     * Updates an existing {@link Activity} instance for given {@code accountId} and {@code name}.
+     * Updates an existing {@link Activity} instance with given {@code accountId} and {@code name}.
      *
      * @param accountId        ID of the account associated with the activity to update
      * @param name             Name of the activity to update
@@ -107,7 +107,7 @@ public class ActivityService {
     }
 
     /**
-     * Deletes activity of provided {@code accountId} and {@code name} from repository.
+     * Deletes activity with given {@code accountId} and {@code name} from repository.
      *
      * @param accountId ID of the account associated with the activity to delete
      * @param name      Name of the activity to delete

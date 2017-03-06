@@ -7,5 +7,6 @@ env:
   - TEST_DIR=api-gateway
   - TEST_DIR=account-service
   - TEST_DIR=activity-service
+  - TEST_DIR=log-service
 script:
   - cd $TEST_DIR && gradle clean test build
