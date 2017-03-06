@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: log-service
+  data:
+    mongodb:
+      host: ${MONGODB_HOST:localhost}
 
 eureka:
   client:
