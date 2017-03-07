@@ -37,21 +37,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                .csrf()
-                .disable()
-                .headers()
-                .frameOptions()
-                .disable()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/api/**").hasAuthority(Authorities.USER)
-                .and()
-                .addFilterBefore(getJwtFilter(), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling()
-                .authenticationEntryPoint(getEntryPoint());
+          .csrf()
+          .disable()
+          .headers()
+          .frameOptions()
+          .disable()
+        .and()
+          .sessionManagement()
+          .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+          .authorizeRequests()
+          .antMatchers("/api/**").hasAuthority(Authorities.USER)
+        .and()
+          .addFilterBefore(getJwtFilter(), UsernamePasswordAuthenticationFilter.class)
+          .exceptionHandling()
+          .authenticationEntryPoint(getEntryPoint());
     }
 
     private JwtFilter getJwtFilter() {

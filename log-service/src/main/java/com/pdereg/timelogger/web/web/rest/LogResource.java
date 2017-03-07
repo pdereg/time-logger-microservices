@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * REST controller for logs.
+ * REST controller for {@link Log} resources.
  */
 @RestController
 @RequestMapping("/api")

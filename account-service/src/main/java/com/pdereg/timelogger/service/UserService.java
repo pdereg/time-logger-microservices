@@ -41,6 +41,7 @@ public class UserService {
     public CompletableFuture<User> createUser(String username, String password) {
         final User user = new User();
         user.setUsername(username);
+
         addInitialAuthorities(user);
         encodeAndSetPassword(user, password);
 
@@ -66,7 +67,7 @@ public class UserService {
      * Fetches and returns a {@link User} instance with a given {@code username}.
      *
      * @param username Name of the user to fetch
-     * @return Optional {@link User} instance for a given {@code username}
+     * @return Optional {@link User} instance with a given {@code username}
      */
     public CompletableFuture<Optional<User>> findOneByUsername(String username) {
         return CompletableFuture.supplyAsync(() -> userRepository.findOneByUsername(username));

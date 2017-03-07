@@ -31,8 +31,8 @@ public class ActivityService {
      * @param accountId        ID of the user account associated with the activity
      * @param name             Name of the activity
      * @param requiredDuration Required duration (per day). Expressed in milliseconds
-     * @param weekdays         An array of weekdays where element at each position describes whether the activity should be
-     *                         performed on that day (starting from Monday)
+     * @param weekdays         An array of weekdays where element at each position describes whether the activity should
+     *                         be performed on that day (starting from Monday)
      * @return New {@link Activity} instance
      * @see Activity
      */

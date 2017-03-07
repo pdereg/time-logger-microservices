@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
- * REST controller for user accounts.
+ * REST controller for {@link User} account resources.
  */
 @RestController
 @RequestMapping("/api")

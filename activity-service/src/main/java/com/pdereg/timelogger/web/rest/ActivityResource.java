@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * REST controller for activities.
+ * REST controller for {@link Activity} resource.
  */
 @RestController
 @RequestMapping("/api")
@@ -97,7 +97,7 @@ public class ActivityResource {
      *
      * @param username Name of the account associated with the activity to update
      * @param name     Name of the activity to update
-     * @param request  HTTP request body which contains data for update
+     * @param request  HTTP request body which contains data to update
      * @return Updated {@link Activity} instance
      */
     @PutMapping("/activities/{username}/{name}")

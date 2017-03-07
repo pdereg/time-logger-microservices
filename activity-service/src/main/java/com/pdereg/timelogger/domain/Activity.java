@@ -50,7 +50,7 @@ public class Activity {
     }
 
     /**
-     * @return ID of the user account associated with this {@link Activity} instance
+     * @return ID of the user account associated with this activity
      */
     public String getAccountId() {
         return accountId;

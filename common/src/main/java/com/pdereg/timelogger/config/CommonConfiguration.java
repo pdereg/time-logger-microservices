@@ -28,12 +28,12 @@ public class CommonConfiguration {
 
     @Bean
     public JwtHandler jwtHandler() {
-        SecretKey secretKey = getJwtSecretKey();
+        final SecretKey secretKey = getJwtSecretKey();
         return new JwtHandler(secretKey, Duration.ofHours(1), ISSUER_NAME, ISSUER_NAME);
     }
 
     private SecretKey getJwtSecretKey() {
-        String secret = environment.getProperty(SECRET_ENV_KEY, "");
+        final String secret = environment.getProperty(SECRET_ENV_KEY, "");
         return new SecretKeySpec(secret.getBytes(), "AES");
     }
 }
